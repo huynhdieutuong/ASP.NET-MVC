@@ -13,9 +13,11 @@ namespace AppMVC
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public static string ContentRootPath { get; set; }
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            ContentRootPath = env.ContentRootPath;
         }
 
         public IConfiguration Configuration { get; }
@@ -50,6 +52,8 @@ namespace AppMVC
 
             app.UseEndpoints(endpoints =>
             {
+                // URL: /{controller}/{action}/{id?}
+                // URL: /Home/Index is default
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
