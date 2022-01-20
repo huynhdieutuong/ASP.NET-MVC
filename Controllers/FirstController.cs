@@ -128,6 +128,8 @@ namespace AppMVC.Controllers
 
         [TempData]
         public string StatusMessage { get; set; }
+
+        [AcceptVerbs("POST", "GET")]
         public IActionResult ViewProduct(int? id)
         {
             // 3.5 use Service to find Product and transfer to View

@@ -1,0 +1,11 @@
+@inject AppMVC.Services.PlanetService planetService
+
+<h1>There are eight planets in the Solar System:</h1>
+<div class="list-group">
+  @foreach (var planet in planetService)
+  {
+    <a class="list-group-item list-group-item-action" asp-action="@planet.Name">
+      @planet.Name
+    </a>
+  }
+</div>

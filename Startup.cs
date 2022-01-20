@@ -49,6 +49,7 @@ namespace AppMVC
             // services.AddSingleton<ProductService, ProductService>();
             // services.AddSingleton(typeof(ProductService));
             services.AddSingleton(typeof(ProductService), typeof(ProductService));
+            services.AddSingleton<PlanetService>();
 
         }
 
@@ -110,6 +111,15 @@ namespace AppMVC
                 // endpoints.MapControllers
                 // endpoints.MapDefaultControllerRoute
                 // endpoints.MapAreaControllerRoute
+
+                // [AcceptVerbs] -> use for action [AcceptVerbs("POST", "GET")]
+                // [Route]
+                // [HttpGet]
+                // [HttpPost]
+                // [HttpPut]
+                // [HttpDelete]
+                // [HttpHead]
+                // [HttpPatch]
 
                 endpoints.MapRazorPages();
             });
