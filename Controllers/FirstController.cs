@@ -61,7 +61,6 @@ namespace AppMVC.Controllers
         // PartialViewResult           | PartialView()
         // ViewComponentResult         | ViewComponent()
         // StatusCodeResult            | StatusCode()
-        // ViewResult                  | View()
 
         public IActionResult Readme()
         {
@@ -103,6 +102,24 @@ namespace AppMVC.Controllers
             var url = "https://google.com";
             _logger.LogInformation("Redirect to " + url);
             return Redirect(url);
+        }
+
+        // 2.1 ViewResult                  | View()
+        public IActionResult HelloView(string userName)
+        {
+            if (string.IsNullOrEmpty(userName)) userName = "Guest";
+
+            // View(template) - direct url: /MyView/Hello1.cshtml
+            // return View("/MyView/Hello1.cshtml", userName);
+
+            // View(Hello2) -> /View/First/Hello2.cshtml
+            // return View("Hello2", userName);
+
+            // View() -> /View/First/HelloView.cshtml
+            // return View((object)userName);
+
+            // 2.2 View() -> /MyView/First/Hello3.cshtml
+            return View("Hello3", userName);
         }
     }
 }

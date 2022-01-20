@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,6 +28,17 @@ namespace AppMVC
         {
             services.AddControllersWithViews();
             services.AddRazorPages(); // To use Razor Pages
+
+            // 2.2 Custom View folder: if not found in View, continue find in MyView
+            services.Configure<RazorViewEngineOptions>(options =>
+            {
+                // Default: /View/Controller/Action.cshtml
+                // Custom: /MyView/Controller/Action.cshtml
+                // {0} -> Action
+                // {1} -> Controller
+                // {2} -> Area
+                options.ViewLocationFormats.Add("/MyView/{1}/{0}" + RazorViewEngine.ViewExtension);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
