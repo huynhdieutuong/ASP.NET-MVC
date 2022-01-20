@@ -6,8 +6,10 @@ using AppMVC.ExtendMethods;
 using AppMVC.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -75,7 +77,41 @@ namespace AppMVC
 
             app.UseEndpoints(endpoints =>
             {
+                // /sayhi
+                endpoints.MapGet("/sayhi", async (context) =>
+                {
+                    await context.Response.WriteAsync($"Hello ASP.NET MVC {DateTime.Now}");
+                });
 
+                // 5.1 endpoints.MapControllerRoute
+                // URL = /any-word/1
+                endpoints.MapControllerRoute(
+                    name: "first",
+                    pattern: "view-product/{id:range(2,4)}", // route constraint reference to convert new RangeRouteConstraint(2, 4) to range(2,4)
+                    defaults: new
+                    {
+                        controller = "First",
+                        action = "ViewProduct"
+                    }
+                    // constraints: new
+                    // {
+                    //     // IRouteConstraint to limit route
+                    //     url = "view-product",
+                    //     id = new RangeRouteConstraint(2, 4)
+                    // }
+                );
+
+                // URL = /{controller}/{action}/{id?}
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "/{controller=Home}/{action=Index}/{id?}"
+                );
+
+                // endpoints.MapControllers
+                // endpoints.MapDefaultControllerRoute
+                // endpoints.MapAreaControllerRoute
+
+                endpoints.MapRazorPages();
             });
         }
     }
