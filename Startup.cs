@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AppMVC.ExtendMethods;
 using AppMVC.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -65,6 +66,8 @@ namespace AppMVC
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.AddStatusCodePage(); // Custom Response Code 400 - 599
+
             app.UseRouting();
 
             app.UseAuthentication();
@@ -72,13 +75,7 @@ namespace AppMVC
 
             app.UseEndpoints(endpoints =>
             {
-                // URL: /{controller}/{action}/{id?}
-                // URL: /Home/Index is default
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
 
-                endpoints.MapRazorPages(); // To use Razor Pages
             });
         }
     }
