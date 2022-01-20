@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Linq;
+using AppMVC.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -8,10 +10,12 @@ namespace AppMVC.Controllers
     public class FirstController : Controller
     {
         private readonly ILogger<FirstController> _logger;
+        private readonly ProductService _productService;
 
-        public FirstController(ILogger<FirstController> logger)
+        public FirstController(ILogger<FirstController> logger, ProductService productService)
         {
             _logger = logger;
+            _productService = productService; // 3.4 Inject Service
         }
 
         public string Index()
@@ -120,6 +124,17 @@ namespace AppMVC.Controllers
 
             // 2.2 View() -> /MyView/First/Hello3.cshtml
             return View("Hello3", userName);
+        }
+
+        public IActionResult ViewProduct(int? id)
+        {
+            // 3.5 use Service to find Product and transfer to View
+            var product = _productService.Where(p => p.Id == id).FirstOrDefault();
+            if (product == null) return NotFound("Product not found");
+
+            // /View/First/ViewProduct.cshtml or
+            // /MyView/First/ViewProduct.cshtml 
+            return View(product);
         }
     }
 }

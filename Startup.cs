@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AppMVC.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -39,6 +40,13 @@ namespace AppMVC
                 // {2} -> Area
                 options.ViewLocationFormats.Add("/MyView/{1}/{0}" + RazorViewEngine.ViewExtension);
             });
+
+            // 3.3 Register Service
+            // services.AddSingleton<ProductService>();
+            // services.AddSingleton<ProductService, ProductService>();
+            // services.AddSingleton(typeof(ProductService));
+            services.AddSingleton(typeof(ProductService), typeof(ProductService));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
