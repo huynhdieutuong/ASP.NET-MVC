@@ -126,11 +126,20 @@ namespace AppMVC.Controllers
             return View("Hello3", userName);
         }
 
+        [TempData]
+        public string StatusMessage { get; set; }
         public IActionResult ViewProduct(int? id)
         {
             // 3.5 use Service to find Product and transfer to View
             var product = _productService.Where(p => p.Id == id).FirstOrDefault();
-            if (product == null) return NotFound("Product not found");
+            if (product == null)
+            {
+                // TempData to transfer data between pages
+                // TempData["StatusMessage"] = "Product not found";
+                StatusMessage = $"Not found product with id = {id}";
+
+                return Redirect(Url.Action("Index", "Home"));
+            }
 
             // /View/First/ViewProduct.cshtml or
             // /MyView/First/ViewProduct.cshtml 
