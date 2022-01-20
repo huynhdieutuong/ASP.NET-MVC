@@ -134,7 +134,15 @@ namespace AppMVC.Controllers
 
             // /View/First/ViewProduct.cshtml or
             // /MyView/First/ViewProduct.cshtml 
-            return View(product);
+            // return View(product);
+
+            // 4.1 ViewData
+            // this.ViewData["product"] = product;
+            // return View("ViewProduct2");
+
+            // 4.2 ViewBag
+            ViewBag.product = product;
+            return View("ViewProduct3");
         }
     }
 }

@@ -1,0 +1,16 @@
+@model AppMVC.Models.ProductModel
+
+@{
+  Layout = "_Layout";
+  var product = ViewBag.product as ProductModel;
+  ViewData["Title"] = product.Name;
+}
+
+<div class="card bg-danger text-white">
+  <h1 class="card-header">@product.Name</h1>
+  <div class="card-body">
+    <p class="card-text">
+      Price: @product.Price
+    </p>
+  </div>
+</div>
