@@ -17,6 +17,7 @@ namespace AppMVC.Controllers
             _productService = productService;
         }
 
+        [Route("/products")]
         public IActionResult Index()
         {
             var products = _productService.OrderBy(p => p.Name).ToList();

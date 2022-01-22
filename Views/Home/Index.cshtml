@@ -7,3 +7,91 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+@* 6.1 Use Controller, Action, Area to get Url *@
+<p>
+    @* Get this Controller/Action Url => Home/Index => https://localhost:5001/ *@
+    @Url.ActionLink()
+</p>
+
+<p>
+    @* Get Home/Index Url without domain => / *@
+    @Url.Action()
+</p>
+
+<p>
+    @* Get Home/Privacy Url => /Home/Privacy *@
+    @Url.Action("Privacy")
+</p>
+
+<p>
+    @* Get Home/Privacy Url => /Home/Privacy/123?name=TuongHuynh *@
+    @Url.Action("Privacy", new { id = 123, name="TuongHuynh" })
+</p>
+
+<p>
+    @* Get Planet/Jupiter Url => /jupiter.html *@
+    @Url.Action("Jupiter", "Planet")
+</p>
+
+<p>
+    @* Get Planet/PlanetInfo/id Url => /solar-system/PlanetInfo/planets/3 *@
+    @Url.Action("PlanetInfo", "Planet", new {id = 3})
+</p>
+
+<p>
+    @* Get Controller/Action Url in ProductManage Area => /products *@
+    @Url.Action("Index", "Product", new { area = "ProductManage" })
+</p>
+
+@* 6.2 Use RouteName to get Url *@
+<p>
+    @* routename = "default", action = "HelloView", controller = "Home" => /products *@
+    @Url.RouteUrl("default", new { action = "HelloView", controller = "Home" })
+</p>
+
+<p>
+    @* routename = "neptune1" => /solar-system/Neptune/star/Neptune *@
+    @Url.RouteUrl("neptune1")
+</p>
+
+@* 6.3 Use anchor tag helper to get Url *@
+<ul>
+    <li>asp-area="Area"</li>
+    <li>asp-action="Action"</li>
+    <li>asp-controller="Controller"</li>
+    <li>asp-route-...="Id"</li>
+    <li>asp-route="default"</li>
+</ul>
+
+<p>
+    <a asp-action="ViewProduct" asp-controller="First" asp-route-id="2">ViewProduct</a>
+</p>
+
+<p>
+    <a asp-action="Index" asp-controller="Product" asp-area="ProductManage">Product list</a>
+</p>
+
+@* 6.4 Asp all route data *@
+<p>
+    <a asp-action="Index" asp-controller="Home" 
+        asp-route-name="TuongHuynh" 
+        asp-route-abc="XYZ" 
+        asp-route-id="3">
+        Asp all route data
+    </a>
+</p>
+
+@{
+    var routedata = new Dictionary<string, string>() 
+        {
+            {"name", "TuongHuynh"},
+            {"abc", "XYZ"},
+            {"id", "3"}
+        };
+}
+<p>
+    <a asp-action="Index" asp-controller="Home" asp-all-route-data="@routedata">
+        Asp all route data 2
+    </a>
+</p>
