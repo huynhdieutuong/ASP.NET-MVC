@@ -102,6 +102,13 @@ namespace AppMVC
                     // }
                 );
 
+                // 5.2.1 endpoints.MapAreaControllerRoute
+                endpoints.MapAreaControllerRoute(
+                    name: "product",
+                    pattern: "/{controller}/{action=Index}/{id?}",
+                    areaName: "ProductManage"
+                );
+
                 // URL = /{controller}/{action}/{id?}
                 endpoints.MapControllerRoute(
                     name: "default",
@@ -110,7 +117,6 @@ namespace AppMVC
 
                 // endpoints.MapControllers
                 // endpoints.MapDefaultControllerRoute
-                // endpoints.MapAreaControllerRoute
 
                 // [AcceptVerbs] -> use for action [AcceptVerbs("POST", "GET")]
                 // [Route]
