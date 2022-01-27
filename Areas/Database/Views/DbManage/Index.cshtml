@@ -1,0 +1,47 @@
+@using Microsoft.EntityFrameworkCore
+@using System.Data
+
+@inject AppDbContext dbContext
+
+@{
+  ViewData["Title"] = "Database info";
+  var connect = dbContext.Database.GetDbConnection();
+  var dbname = connect.Database;
+  var can_connect = dbContext.Database.CanConnect();
+}
+
+<h2>Database info:</h2>
+<p>- Database: @dbname</p>
+<p>- Source: @connect.DataSource</p>
+<p>- State: @connect.State</p>
+
+<hr>
+
+<h2>Migrations:</h2>
+@foreach (var migration in dbContext.Database.GetAppliedMigrations())
+{
+  <p>@migration</p>
+}
+@foreach (var migration in dbContext.Database.GetPendingMigrations())
+{
+  <p>@migration (pending)</p>
+}
+
+<hr>
+
+@if (!can_connect)
+{
+  <p class="alert alert-danger">Can not connect to Database</p>
+}
+@if (can_connect)
+{
+  <h2>Tables in Database:</h2>
+  await dbContext.Database.OpenConnectionAsync();
+  var table = dbContext.Database.GetDbConnection().GetSchema("Tables");
+  <ul>
+    @foreach (System.Data.DataRow row in table.Rows)
+    {
+      <li>@row["TABLE_NAME"]</li>
+    }
+  </ul>
+}

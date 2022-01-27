@@ -6,6 +6,8 @@
 
 ```
 dotnet aspnet-codegenerator area ProductManage
+
+dotnet aspnet-codegenerator controller -name Product -outDir Areas\ProductManage\Controllers\ -namespace AppMVC.Areas.ProductManage.Controllers
 ```
 
 Areas/ProductManage/Controllers => Create ProductController.cs
