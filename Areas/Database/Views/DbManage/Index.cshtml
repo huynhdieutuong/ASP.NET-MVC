@@ -29,6 +29,13 @@
   <p>@migration (pending)</p>
 }
 
+@if (dbContext.Database.GetPendingMigrations().Any()) 
+{
+  <form method="post">
+    <button type="submit" class="btn btn-primary" asp-action="Migrate">Create Db (Update migration)</button>
+  </form>
+}
+
 <hr>
 
 @if (!can_connect)

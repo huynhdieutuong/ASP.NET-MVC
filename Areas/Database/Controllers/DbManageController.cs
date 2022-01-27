@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AppMVC.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AppMVC.Areas.Database.Controllers
 {
@@ -38,6 +39,16 @@ namespace AppMVC.Areas.Database.Controllers
             var success = await _dbContext.Database.EnsureDeletedAsync();
 
             StatusMessage = success ? "Delete database succeed" : "Delete database failed";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> MigrateAsync()
+        {
+            await _dbContext.Database.MigrateAsync();
+
+            StatusMessage = "Update database succeed";
 
             return RedirectToAction(nameof(Index));
         }
