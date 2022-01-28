@@ -11,11 +11,13 @@ namespace AppMVC.Models.Contacts
 
         [Column(TypeName = "nvarchar")]
         [StringLength(50)]
-        [Required]
+        [Required(ErrorMessage = "{0} is required")]
+        [Display(Name = "Full name")]
         public string FullName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "{0} is required")]
         [StringLength(100)]
+        [EmailAddress(ErrorMessage = "Please input a valid email")]
         public string Email { get; set; }
 
         public DateTime DateSent { get; set; }
@@ -23,6 +25,8 @@ namespace AppMVC.Models.Contacts
         public string Message { get; set; }
 
         [StringLength(50)]
+        [Phone(ErrorMessage = "Please input a valid phone number")]
+        [Display(Name = "Phone number")]
         public string Phone { get; set; }
     }
 }

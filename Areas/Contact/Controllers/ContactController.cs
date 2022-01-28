@@ -21,6 +21,9 @@ namespace AppMVC.Areas.Contact.Controllers
             _context = context;
         }
 
+        [TempData]
+        public string StatusMessage { get; set; }
+
         [HttpGet("/admin/contact")]
         public async Task<IActionResult> Index()
         {
@@ -55,13 +58,18 @@ namespace AppMVC.Areas.Contact.Controllers
         [HttpPost("/contact")]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SendContact([Bind("Id,FullName,Email,DateSent,Message,Phone")] ContactModel contact)
+        public async Task<IActionResult> SendContact([Bind("FullName,Email,Message,Phone")] ContactModel contact)
         {
             if (ModelState.IsValid)
             {
+                contact.DateSent = DateTime.Now;
                 _context.Add(contact);
+
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                StatusMessage = "Sent your contact";
+
+                return RedirectToAction("Index", "Home");
             }
             return View(contact);
         }
