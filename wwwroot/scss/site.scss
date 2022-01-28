@@ -9,24 +9,12 @@ body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
 }
-
 .footer {
   position: absolute;
   bottom: 0;
   width: 100%;
   white-space: nowrap;
-  line-height: 60px;
-  /* Vertically center the text there */
+  line-height: 60px; /* Vertically center the text there */
 }
 
-.contact-firstcol {
-  background-color: #9854a0;
-  color: white;
-  text-align: center;
-  border-radius: 15px 0 0 15px;
-}
-.contact-firstcol h4 {
-  line-height: 40px;
-  font-weight: 400;
-  margin-top: 20px;
-}
+@import 'contact';

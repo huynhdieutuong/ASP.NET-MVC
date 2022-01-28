@@ -1,0 +1,33 @@
+{
+  "name": "appmvc",
+  "version": "1.0.0",
+  "description": "App MVC",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huynhdieutuong/ASP.NET-MVC.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/huynhdieutuong/ASP.NET-MVC/issues"
+  },
+  "homepage": "https://github.com/huynhdieutuong/ASP.NET-MVC#readme",
+  "dependencies": {
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-cssmin": "^0.2.0",
+    "gulp-less": "^5.0.0",
+    "gulp-postcss": "^9.0.1",
+    "gulp-rename": "^2.0.0",
+    "gulp-sass": "^5.1.0",
+    "gulp-uglify": "^3.0.2",
+    "node-sass": "^7.0.1",
+    "postcss": "^8.4.5",
+    "rimraf": "^3.0.2",
+    "sass": "^1.49.0"
+  }
+}
