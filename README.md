@@ -45,3 +45,11 @@ dotnet ef database update
 1. Create Contact Model & add to AppDbContext
 2. dotnet ef migrations add Contact & dotnet ef database update
 3. Create Controller & CRUD code for Contact
+
+## Integrate Identity
+
+1. Install package
+2. Create AppUser model & extend IdentityDbContext in AppDbContext
+3. dotnet ef migrations add AddIdentity & dotnet ef database update
+4. Register & Config Identity in Startup
+5. Make sure have 2 middlewares: app.UseAuthentication(); app.UseAuthorization();

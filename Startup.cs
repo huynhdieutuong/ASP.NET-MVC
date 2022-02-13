@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
@@ -58,6 +59,67 @@ namespace AppMVC
             // services.AddSingleton(typeof(ProductService));
             services.AddSingleton(typeof(ProductService), typeof(ProductService));
             services.AddSingleton<PlanetService>();
+
+            // Register Identity
+            services.AddIdentity<AppUser, IdentityRole>()
+                    .AddEntityFrameworkStores<AppDbContext>()
+                    .AddDefaultTokenProviders();
+
+            // Custome config for Identity:
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password
+                options.Password.RequireDigit = false; // Not require number
+                options.Password.RequireLowercase = false; // Not require lowercase
+                options.Password.RequireNonAlphanumeric = false; // Not require special characters
+                options.Password.RequireUppercase = false; // Not require uppercase
+                options.Password.RequiredLength = 3; // Minimum 3 chars
+                options.Password.RequiredUniqueChars = 1; // Unique chars
+
+                // Setup lockout (lockoutOnFailure = true) & Lock user if user login fail more than 5 times in 5 minutes
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Lock 5 minutes
+                options.Lockout.MaxFailedAccessAttempts = 5; // Login fail 5 times
+                options.Lockout.AllowedForNewUsers = true;
+
+                // Create User
+                options.User.AllowedUserNameCharacters =
+                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+"; // UserName only include these chars
+                options.User.RequireUniqueEmail = true;  // Email is unique
+
+                // Login
+                options.SignIn.RequireConfirmedEmail = true; // Confirm email is exists
+                options.SignIn.RequireConfirmedPhoneNumber = false; // Confirm phone number
+                options.SignIn.RequireConfirmedAccount = true; // Default false. When register, auto login, not confirm
+            });
+
+            // Config Authorize
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/login";
+                options.LogoutPath = "/logout";
+                options.AccessDeniedPath = "/access-denied";
+            });
+
+            // Create Credentials in https://console.cloud.google.com/ & Config ClientId, ClientSecret
+            services.AddAuthentication()
+                    .AddGoogle(options =>
+                    {
+                        var googleConfig = Configuration.GetSection("Authentication:Google");
+                        options.ClientId = googleConfig["ClientId"];
+                        options.ClientSecret = googleConfig["ClientSecret"];
+                        options.CallbackPath = "/login-with-google"; // default: https://localhost:5001/signin-google
+                        // When User accept Google login, it will redirect to /login-with-google?token and save token to session
+                    })
+                    .AddFacebook(options => // Config Facebook login
+                    {
+                        var facebookConfig = Configuration.GetSection("Authentication:Facebook");
+                        options.AppId = facebookConfig["AppId"];
+                        options.AppSecret = facebookConfig["AppSecret"];
+                        options.CallbackPath = "/login-with-facebook";
+                    })
+                    // .AddTwitter()
+                    // .AddMicrosoftAccount()
+                    ;
 
         }
 
