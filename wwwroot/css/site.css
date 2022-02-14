@@ -30,3 +30,31 @@ body {
   font-weight: 400;
   margin-top: 20px;
 }
+
+.form-login,
+.form-register {
+  width: 100%;
+  max-width: 330px;
+  padding: 15px;
+  margin: auto;
+}
+.form-login .checkbox,
+.form-register .checkbox {
+  font-weight: 400;
+}
+.form-login .form-floating:focus-within,
+.form-register .form-floating:focus-within {
+  z-index: 2;
+}
+.form-login input[type=email],
+.form-register input[type=email] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-login input[type=password],
+.form-register input[type=password] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
