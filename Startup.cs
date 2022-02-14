@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +60,12 @@ namespace AppMVC
             // services.AddSingleton(typeof(ProductService));
             services.AddSingleton(typeof(ProductService), typeof(ProductService));
             services.AddSingleton<PlanetService>();
+
+            // Register SendMailService
+            services.AddSingleton<IEmailSender, SendMailService>();
+            services.AddOptions();
+            var mailSettings = Configuration.GetSection("MailSettings");
+            services.Configure<MailSettings>(mailSettings);
 
             // Register Identity
             services.AddIdentity<AppUser, IdentityRole>()
