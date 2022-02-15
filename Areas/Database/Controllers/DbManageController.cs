@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AppMVC.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AppMVC.Areas.Database.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Area("Database")]
     [Route("/database-manage/[action]")]
     public class DbManageController : Controller

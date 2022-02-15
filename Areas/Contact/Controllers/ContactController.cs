@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace AppMVC.Areas.Contact.Controllers
 {
+    [Authorize]
     [Area("Contact")]
     public class ContactController : Controller
     {

@@ -159,5 +159,22 @@ namespace AppMVC.Areas.Identity.Controllers
             }
             return View();
         }
+
+        [HttpPost("/logout")]
+        public async Task<IActionResult> Logout(string returnUrl = null)
+        {
+            returnUrl ??= Url.Content("~/");
+            ViewData["ReturnUrl"] = returnUrl;
+
+            _logger.LogInformation("User logged out.");
+            await _signInManager.SignOutAsync();
+            return LocalRedirect(returnUrl);
+        }
+
+        [HttpGet("/access-denied")]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }
