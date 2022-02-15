@@ -9,6 +9,7 @@ namespace AppMVC.Areas.Identity.Models.Account
         public string UserNameOrEmail { get; set; }
 
         [Required(ErrorMessage = "{0} is required")]
+        [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
 

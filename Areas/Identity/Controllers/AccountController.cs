@@ -146,8 +146,13 @@ namespace AppMVC.Areas.Identity.Controllers
                 }
                 if (result.IsLockedOut)
                 {
-                    _logger.LogInformation("Account have been locked out");
+                    _logger.LogInformation("Account have been locked out.");
                     return View("Lockout");
+                }
+                if (result.IsNotAllowed)
+                {
+                    _logger.LogInformation("User cannot sign in without a confirmed email.");
+                    return View("RegisterConfirmation");
                 }
                 ModelState.AddModelError("Wrong password");
                 return View();
