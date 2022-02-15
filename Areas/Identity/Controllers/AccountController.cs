@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AppMVC.Areas.Identity.Models.Account;
+using AppMVC.ExtendMethods;
 using AppMVC.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -84,7 +85,7 @@ namespace AppMVC.Areas.Identity.Controllers
                     return LocalRedirect(returnUrl);
                 }
 
-                // ModelState.AddModelError(result);
+                ModelState.AddModelError(result);
             }
             return View();
         }
