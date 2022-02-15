@@ -112,5 +112,47 @@ namespace AppMVC.Areas.Identity.Controllers
         {
             return View();
         }
+
+        [HttpGet("/login")]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost("/login")]
+        public async Task<IActionResult> Login(LoginModel model, string returnUrl = null)
+        {
+            returnUrl ??= Url.Content("~/");
+            ViewData["ReturnUrl"] = returnUrl;
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.UserNameOrEmail);
+                if (user == null)
+                {
+                    user = await _userManager.FindByNameAsync(model.UserNameOrEmail);
+
+                    if (user == null)
+                    {
+                        ModelState.AddModelError("User not found");
+                        return View();
+                    }
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, true);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User logged in.");
+                    return LocalRedirect(returnUrl);
+                }
+                if (result.IsLockedOut)
+                {
+                    _logger.LogInformation("Account have been locked out");
+                    return View("Lockout");
+                }
+                ModelState.AddModelError("Wrong password");
+                return View();
+            }
+            return View();
+        }
     }
 }
