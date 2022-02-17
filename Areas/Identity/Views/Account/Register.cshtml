@@ -5,7 +5,7 @@
 }
 
 <main class="form-register">
-  <form asp-controller="Account" asp-action="Register" method="post">
+  <form asp-controller="Account" asp-action="Register" method="post" asp-route-returnUrl="@ViewData["ReturnUrl"]">
     <h1 class="h3 mb-3 fw-normal">Register</h1>
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-floating">

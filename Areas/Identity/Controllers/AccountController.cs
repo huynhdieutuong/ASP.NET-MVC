@@ -37,8 +37,10 @@ namespace AppMVC.Areas.Identity.Controllers
         }
 
         [HttpGet("/register")]
-        public IActionResult Register()
+        public IActionResult Register(string returnUrl = null)
         {
+            returnUrl ??= Url.Content("~/");
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
@@ -114,8 +116,10 @@ namespace AppMVC.Areas.Identity.Controllers
         }
 
         [HttpGet("/login")]
-        public IActionResult Login()
+        public IActionResult Login(string returnUrl = null)
         {
+            returnUrl ??= Url.Content("~/");
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
