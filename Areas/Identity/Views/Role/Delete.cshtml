@@ -1,0 +1,28 @@
+@model IdentityRole
+@{
+    ViewData["Title"] = "Delete role";
+}
+<h2>@ViewData["Title"]</h2>
+<partial name="_StatusMessage"></partial>
+
+<hr>
+
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <p>Are you sure to delete <strong>@Model.Name</strong> role?</p>
+
+            <div class="form-group">
+                <input type="submit" value="Delete" class="btn btn-danger" />
+                <a class="btn btn-primary" asp-action="Index">Roles list</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
