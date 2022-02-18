@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AppMVC.Areas.Identity.Data;
 using AppMVC.Areas.Identity.Models.Role;
 using AppMVC.ExtendMethods;
 using AppMVC.Models;
@@ -13,7 +14,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AppMVC.Areas.Identity.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = RoleNames.Admin)]
     [Area("Identity")]
     public class RoleController : Controller
     {

@@ -1,0 +1,30 @@
+@model UserListModel
+
+@{
+    ViewData["Title"] = "User list";
+}
+<h2>@ViewData["Title"]</h2>
+<partial name="_StatusMessage"></partial>
+
+<table class="table">
+    <tr>
+        <th>User name</th>
+        <th>Roles</th>
+    </tr>
+    @foreach (var user in Model.Users)
+    {
+        <tr>
+            <td>@user.UserName</td>
+            <td>
+                @if (string.IsNullOrEmpty(user.RoleNames))
+                {
+                    <a class="text-dark" asp-action="AddRole" asp-route-userId="@user.Id">+ Add roles</a>
+                }
+                else
+                {
+                    <a asp-action="AddRole" asp-route-userId="@user.Id">@user.RoleNames</a>
+                }
+            </td>
+        </tr>
+    }
+</table>
