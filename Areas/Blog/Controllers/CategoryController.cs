@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using AppMVC.Areas.Identity.Data;
 using System.Collections;
 using Microsoft.Extensions.Logging;
+using AppMVC.ExtendMethods;
 
 namespace AppMVC.Areas.Blog.Controllers
 {
@@ -93,10 +94,30 @@ namespace AppMVC.Areas.Blog.Controllers
                 {
                     if (category.ParentId == -1) category.ParentId = null;
 
-                    _context.Categories.Update(category);
-                    await _context.SaveChangesAsync();
+                    var qr = (from c in _context.Categories select c)
+                                .Include(c => c.ChildrenCategory);
 
-                    return RedirectToAction(nameof(Index));
+                    var fullCat = (await qr.ToListAsync())
+                                    .Where(c => c.Id == catId)
+                                    .FirstOrDefault();
+
+                    bool canUpdate = true;
+                    if (fullCat.ChildrenCategory?.Count > 0 && category.ParentId != null)
+                    {
+                        canUpdate = CheckIsChildrenCat(fullCat.ChildrenCategory.ToList(), category.ParentId.Value, canUpdate);
+                    }
+
+                    if (canUpdate && fullCat.ParentId != category.ParentId && fullCat.Id != category.ParentId)
+                    {
+                        fullCat.ParentId = category.ParentId;
+                        _context.Categories.Update(fullCat);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("Parent category is a children category");
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -206,6 +227,26 @@ namespace AppMVC.Areas.Blog.Controllers
         private bool CategoryExists(int id)
         {
             return _context.Categories.Any(c => c.Id == id);
+        }
+
+        private bool CheckIsChildrenCat(List<Category> childrenCats, int parentId, bool canUpdate)
+        {
+            foreach (var cat in childrenCats)
+            {
+                if (cat.Id == parentId)
+                {
+                    canUpdate = false;
+                    break;
+                }
+                else
+                {
+                    if (cat.ChildrenCategory?.Count > 0)
+                    {
+                        canUpdate = CheckIsChildrenCat(cat.ChildrenCategory.ToList(), parentId, canUpdate);
+                    }
+                }
+            }
+            return canUpdate;
         }
     }
 }
