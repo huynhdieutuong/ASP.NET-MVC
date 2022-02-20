@@ -71,6 +71,103 @@ namespace AppMVC.Areas.Blog.Controllers
             return View();
         }
 
+        [HttpGet("/admin/categories/{catId}/edit")]
+        public async Task<IActionResult> Edit(int? catId)
+        {
+            if (catId == null) return NotFound("CategoryId not found");
+
+            Category category = await _context.Categories.FindAsync(catId);
+            if (category == null) return NotFound("Category not found");
+
+            ViewBag.categories = new SelectList(await GetTreeCategory(), "Id", "Title", category.ParentId);
+            return View(category);
+        }
+        [HttpPost("/admin/categories/{catId}/edit")]
+        public async Task<IActionResult> Edit(int? catId, Category category)
+        {
+            if (catId != category.Id) return NotFound("CategoryId not found");
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (category.ParentId == -1) category.ParentId = null;
+
+                    _context.Categories.Update(category);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CategoryExists(category.Id)) return NotFound("Category not found");
+                    throw;
+                }
+            }
+
+            ViewBag.categories = new SelectList(await GetTreeCategory(), "Id", "Title", category.ParentId);
+            return View(category);
+        }
+
+        [HttpGet("/admin/categories/{catId}/delete")]
+        public async Task<IActionResult> Delete(int? catId)
+        {
+            if (catId == null) return NotFound("CategoryId not found");
+
+            Category category = await _context.Categories.FindAsync(catId);
+            if (category == null) return NotFound("Category not found");
+
+            return View(category);
+        }
+        [HttpPost("/admin/categories/{catId}/delete"), ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirm(int? catId)
+        {
+            if (catId == null) return NotFound("CategoryId not found");
+
+            Category category = await _context.Categories
+                                    .Include(c => c.ChildrenCategory)
+                                    .Include(c => c.ParentCategory)
+                                    .FirstOrDefaultAsync(c => c.Id == catId);
+
+            if (category == null) return NotFound("Category not found");
+
+            try
+            {
+                if (category.ChildrenCategory?.Count > 0)
+                {
+                    foreach (var chilCat in category.ChildrenCategory)
+                    {
+                        chilCat.ParentId = category.ParentId;
+                    }
+                }
+
+                _context.Categories.Remove(category);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CategoryExists(category.Id)) return NotFound("Category not found");
+                return View(category);
+            }
+        }
+
+        [HttpGet("/admin/categories/{catId}")]
+        public async Task<IActionResult> Details(int? catId)
+        {
+            if (catId == null) return NotFound("CategoryId not found");
+
+            Category category = await _context.Categories
+                                    .Include(c => c.ParentCategory)
+                                    .Where(c => c.Id == catId)
+                                    .FirstOrDefaultAsync();
+
+            if (category == null) return NotFound("Category not found");
+
+            return View(category);
+        }
+
         private async Task<IEnumerable<Category>> GetTreeCategory(bool isIndex = false)
         {
             var qr = (from c in _context.Categories select c)
@@ -104,6 +201,11 @@ namespace AppMVC.Areas.Blog.Controllers
                     AddChildrenCategory(category.ChildrenCategory.ToList(), newCategories, level + 1);
                 }
             }
+        }
+
+        private bool CategoryExists(int id)
+        {
+            return _context.Categories.Any(c => c.Id == id);
         }
     }
 }
