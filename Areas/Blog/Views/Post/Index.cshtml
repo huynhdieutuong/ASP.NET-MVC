@@ -1,0 +1,70 @@
+@model IEnumerable<Post>
+
+@{
+    ViewData["Title"] = "Posts";
+    Layout = "_Layout";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Create post</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(m => m.Title)
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(m => m.AuthorId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.DateCreated) <br/>
+                @Html.DisplayNameFor(m => m.DateUpdated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.Published)
+            </th>
+            <th>Categories</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var post in Model) {
+        <tr>
+            <td>
+
+                <a title="View Details" asp-action="Details" asp-route-postId="@post.Id">
+                    <strong>@Html.DisplayFor(m => post.Title)</strong>
+                </a>
+            </td>
+            <td>
+                @Html.DisplayFor(m => post.Author.UserName)
+            </td>
+            <td>
+                @post.DateCreated.ToShortDateString()
+                <br>
+                @post.DateUpdated.ToShortDateString()
+            </td>
+
+            <td>
+                @Html.DisplayFor(m => post.Published)
+            </td>
+            <td>
+                @Html.Raw(string.Join("<br>",
+                    post.PostCategories
+                    .Select(p => p.Category)
+                    .ToList()
+                    .Select(c => $"<i>{c.Title}</i>")))
+            </td>
+
+            <td>
+                <a class="btn btn-warning" asp-action="Edit" asp-route-postId="@post.Id">Edit</a>
+                <a class="btn btn-danger" asp-action="Delete" asp-route-postId="@post.Id">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
