@@ -12,6 +12,9 @@ using AppMVC.Areas.Identity.Data;
 using System.Collections;
 using Microsoft.Extensions.Logging;
 using AppMVC.ExtendMethods;
+using Microsoft.AspNetCore.Identity;
+using AppMVC.Areas.Blog.Models;
+using AppMVC.Utilities;
 
 namespace AppMVC.Areas.Blog.Controllers
 {
@@ -20,11 +23,13 @@ namespace AppMVC.Areas.Blog.Controllers
     public class PostController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<AppUser> _userManager;
         private readonly ILogger<CategoryController> _logger;
 
-        public PostController(AppDbContext context, ILogger<CategoryController> logger)
+        public PostController(AppDbContext context, UserManager<AppUser> userManager, ILogger<CategoryController> logger)
         {
             _context = context;
+            _userManager = userManager;
             _logger = logger;
         }
 
@@ -76,6 +81,87 @@ namespace AppMVC.Areas.Blog.Controllers
             if (post == null) return NotFound("Post not found");
 
             return View(post);
+        }
+
+        [HttpGet("/admin/posts/create")]
+        public async Task<IActionResult> Create()
+        {
+            ViewBag.categories = new MultiSelectList(await GetTreeCategory(), "Id", "Title");
+            return View();
+        }
+        [HttpPost("/admin/posts/create")]
+        public async Task<IActionResult> Create(CreatePostModel post)
+        {
+            ViewBag.categories = new MultiSelectList(await GetTreeCategory(), "Id", "Title");
+
+            if (post.Slug == null)
+            {
+                post.Slug = AppUtilities.GenerateSlug(post.Title);
+            }
+
+            if (await _context.Posts.AnyAsync(p => p.Slug == post.Slug))
+            {
+                ModelState.AddModelError("Slug", "Duplicated url. Please enter another url");
+                return View(post);
+            }
+
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(this.User);
+                post.DateCreated = post.DateUpdated = DateTime.Now;
+                post.AuthorId = user.Id;
+                _context.Posts.Add(post);
+
+                if (post.CategoryIds != null)
+                {
+                    foreach (var catId in post.CategoryIds)
+                    {
+                        _context.PostCategories.Add(new PostCategory()
+                        {
+                            Post = post,
+                            CategoryId = catId
+                        });
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                StatusMessage = $"Created {post.Title}";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View();
+        }
+
+        private async Task<IEnumerable<Category>> GetTreeCategory()
+        {
+            var qr = _context.Categories
+                        .Include(c => c.ParentCategory)
+                        .Include(c => c.ChildrenCategory);
+
+            var categories = (await qr.ToListAsync()).Where(c => c.ParentId == null).ToList();
+
+            List<Category> newCategories = new List<Category>();
+
+            AddChildrenCategory(categories, newCategories, 0);
+
+            return newCategories;
+        }
+        private void AddChildrenCategory(List<Category> categories, List<Category> newCategories, int level)
+        {
+            var prefix = string.Concat(Enumerable.Repeat("--", level));
+            foreach (var category in categories)
+            {
+                Category tempCategory = new Category()
+                {
+                    Id = category.Id,
+                    Title = $"{prefix} {category.Title}"
+                };
+                newCategories.Add(tempCategory);
+                if (category.ChildrenCategory?.Count > 0)
+                {
+                    AddChildrenCategory(category.ChildrenCategory.ToList(), newCategories, level + 1);
+                }
+            }
         }
     }
 }

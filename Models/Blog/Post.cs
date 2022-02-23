@@ -19,7 +19,7 @@ namespace AppMVC.Models.Blog
         [Display(Name = "Content")]
         public string Content { get; set; }
 
-        [Required(ErrorMessage = "{0} is required")]
+        // [Required(ErrorMessage = "{0} is required")]
         [Display(Name = "Current url", Prompt = "If slug isn't entered, it will be generated based on Title")]
         [StringLength(160, MinimumLength = 5, ErrorMessage = "{0} must be between {2} - {1} chars")]
         [RegularExpression("^[a-z0-9-]*$", ErrorMessage = "Slug only contains [a-z] or [0-9]")]
@@ -28,7 +28,7 @@ namespace AppMVC.Models.Blog
         [Display(Name = "Published")]
         public bool Published { get; set; }
 
-        [Required]
+        // [Required]
         [Display(Name = "Author")]
         public string AuthorId { get; set; }
         [ForeignKey("AuthorId")]
