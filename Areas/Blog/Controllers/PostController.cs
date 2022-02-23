@@ -132,6 +132,99 @@ namespace AppMVC.Areas.Blog.Controllers
             return View();
         }
 
+        [HttpGet("/admin/posts/{postId}/edit")]
+        public async Task<IActionResult> Edit(int? postId)
+        {
+            if (postId == null) return NotFound("PostId not found");
+
+            var post = await _context.Posts
+                            .Include(p => p.PostCategories)
+                            .FirstOrDefaultAsync(p => p.Id == postId);
+            if (post == null) return NotFound("Post not found");
+
+            var postEdit = new CreatePostModel()
+            {
+                Id = post.Id,
+                Title = post.Title,
+                CategoryIds = post.PostCategories.Select(pc => pc.CategoryId).ToArray(),
+                Slug = post.Slug,
+                Content = post.Content,
+                Published = post.Published
+            };
+
+            ViewBag.categories = new MultiSelectList(await GetTreeCategory(), "Id", "Title");
+
+            return View(postEdit);
+        }
+        [HttpPost("/admin/posts/{postId}/edit")]
+        public async Task<IActionResult> Edit(int? postId, CreatePostModel post)
+        {
+            ViewBag.categories = new MultiSelectList(await GetTreeCategory(), "Id", "Title");
+
+            if (postId == null) return NotFound("PostId not found");
+            if (postId != post.Id) return NotFound("Post not found");
+
+            if (post.Slug == null)
+            {
+                post.Slug = AppUtilities.GenerateSlug(post.Title);
+            }
+
+            if (await _context.Posts.AnyAsync(p => p.Slug == post.Slug && p.Id != post.Id))
+            {
+                ModelState.AddModelError("Slug", "Duplicated url. Please enter another url");
+                return View(post);
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var postEdit = await _context.Posts
+                            .Include(p => p.PostCategories)
+                            .FirstOrDefaultAsync(p => p.Id == postId);
+                    if (postEdit == null) return NotFound("Post not found");
+
+                    // Update post
+                    postEdit.Title = post.Title;
+                    postEdit.Content = post.Content;
+                    postEdit.Slug = post.Slug;
+                    postEdit.Published = post.Published;
+                    postEdit.DateUpdated = DateTime.Now;
+
+                    _context.Posts.Update(postEdit);
+
+                    // Update post category
+                    if (post.CategoryIds == null) post.CategoryIds = new int[] { };
+
+                    var oldCatIds = postEdit.PostCategories.Select(pc => pc.CategoryId).ToArray();
+                    var newCatIds = post.CategoryIds;
+
+                    var removePostCategories = postEdit.PostCategories.Where(cat => !newCatIds.Contains(cat.CategoryId));
+                    _context.PostCategories.RemoveRange(removePostCategories);
+
+                    var addPostCategories = newCatIds.Where(catId => !oldCatIds.Contains(catId));
+                    foreach (var catId in addPostCategories)
+                    {
+                        _context.PostCategories.Add(new PostCategory()
+                        {
+                            PostId = postEdit.Id,
+                            CategoryId = catId
+                        });
+                    }
+
+                    await _context.SaveChangesAsync();
+                }
+                catch (System.Exception)
+                {
+                    throw;
+                }
+                StatusMessage = $"Updated {post.Title}";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View();
+        }
+
         private async Task<IEnumerable<Category>> GetTreeCategory()
         {
             var qr = _context.Categories
