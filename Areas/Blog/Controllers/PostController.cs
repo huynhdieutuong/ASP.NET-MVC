@@ -32,14 +32,34 @@ namespace AppMVC.Areas.Blog.Controllers
         public string StatusMessage { get; set; }
 
         [HttpGet("/admin/posts")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery(Name = "p")] int page = 1)
         {
-            var posts = await _context.Posts
+            var qr = _context.Posts
                             .Include(p => p.Author)
                             .Include(p => p.PostCategories)
                             .ThenInclude(pc => pc.Category)
-                            .OrderByDescending(p => p.DateCreated)
-                            .ToListAsync();
+                            .OrderByDescending(p => p.DateCreated);
+
+            int POST_PER_PAGE = 5;
+            int PAGE_RANGE = 5;
+            int totalPostsNumber = qr.Count();
+            int totalPages = (int)Math.Ceiling((decimal)totalPostsNumber / POST_PER_PAGE);
+
+            if (page <= 0) return RedirectToAction(nameof(Index), new { p = 1 });
+            if (page > totalPages) return RedirectToAction(nameof(Index), new { p = totalPages });
+
+            var paginationModel = new PaginationModel()
+            {
+                TotalPages = totalPages,
+                CurrentPage = page,
+                PageRange = PAGE_RANGE,
+                GenerateUrl = (page) => Url.Action("Index", new { p = page })
+            };
+
+            ViewBag.paginationModel = paginationModel;
+
+            var posts = await qr.Skip((page - 1) * POST_PER_PAGE).Take(POST_PER_PAGE).ToListAsync();
+
             return View(posts);
         }
 

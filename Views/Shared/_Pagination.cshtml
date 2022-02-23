@@ -1,0 +1,101 @@
+@model PaginationModel
+
+@{
+  int totalPages = Model.TotalPages;
+  int currentPage = Model.CurrentPage;
+  int pageRage = Model.PageRange;
+  var generateUrl = Model.GenerateUrl;
+
+  int? nextPage = null;
+  int? prevPage = null;
+  string disabledNextClass = currentPage == totalPages ? "disabled" : "";
+  string disabledPrevClass = currentPage == 1 ? "disabled" : "";
+
+  if (currentPage > 1 || currentPage < totalPages) {
+    nextPage = currentPage + 1;
+    prevPage = currentPage - 1;
+  }
+
+  @* Way 1: Cal endLeft and endRight, then add to listPage *@
+  @* int pagesInRight = (int)Math.Floor((decimal)(pageRage - 1)/2);
+  int pagesInLeft = pageRage - 1 - pagesInRight;
+  List<int> listPage = new List<int>();
+  if (pageRage <= totalPages) {
+    listPage.Add(currentPage);
+    int rest = 0;
+    int endRight = currentPage + pagesInRight;
+    int endLeft = currentPage - pagesInLeft;
+    if (endRight > totalPages) {
+      rest = endRight - totalPages;
+      endRight = totalPages;
+      endLeft = endLeft - rest;
+    }
+    if (endLeft < 1) {
+      rest = 1 - endLeft;
+      endLeft = 1;
+      endRight = endRight + rest;
+    }
+    for (int i = currentPage + 1; i <= endRight; i++)
+    {
+      listPage.Add(i);
+    }
+    for (int i = currentPage - 1; i >= endLeft; i--)
+    {
+      listPage.Insert(0, i);
+    }
+  } else {
+    for (int i = 1; i <= totalPages; i++)
+    {
+      listPage.Add(i);
+    }
+  } *@
+
+  @* Way 2: add to listPage, then add rest to listPage *@
+  List<int> listPage = new List<int>();
+  listPage.Add(currentPage);
+  int rest = pageRage - 1;
+  int pagesPerSite = (int)Math.Ceiling((decimal)rest / 2);
+  for (int i = 1; i <= pagesPerSite; i++)
+  {
+    if (currentPage + i <= totalPages) {
+      listPage.Add(currentPage + i);
+      rest--;
+    }
+    if (currentPage - i >= 1) {
+      listPage.Insert(0, currentPage - i);
+      rest--;
+    }
+  }
+  if (rest > 0) {
+    if (listPage[0] == 1) {
+      for (int i = 0; i < rest; i++)
+      {
+        if (listPage.Last() + 1 < totalPages) {
+          listPage.Add(listPage.Last() + 1);
+        }
+      }
+    }
+    if (listPage.Last() == totalPages) {
+      for (int i = 0; i < rest; i++)
+      {
+        if (listPage.First() - 1 > 1) {
+          listPage.Insert(0, listPage.First() - 1);
+        }
+      }
+    }
+  }
+  if (listPage.Count > pageRage) listPage.Remove(listPage.Last());
+}
+
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item @disabledPrevClass"><a class="page-link" href="@generateUrl(prevPage)">Previous</a></li>
+    @foreach (var i in listPage)
+    {
+      string currentPageClass = currentPage == i ? "active" : "";
+      string hrefPage = currentPage == i ? "#" : generateUrl(i);
+      <li class="page-item @currentPageClass"><a class="page-link" href="@hrefPage">@i</a></li>
+    }
+    <li class="page-item @disabledNextClass"><a class="page-link" href="@generateUrl(nextPage)">Next</a></li>
+  </ul>
+</nav>
