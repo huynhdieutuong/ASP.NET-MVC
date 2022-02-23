@@ -225,6 +225,35 @@ namespace AppMVC.Areas.Blog.Controllers
             return View();
         }
 
+        [HttpGet("/admin/posts/{postId}/delete")]
+        public async Task<IActionResult> Delete(int? postId)
+        {
+            if (postId == null) return NotFound("PostId not found");
+
+            var post = await _context.Posts.FindAsync(postId);
+            if (post == null) return NotFound("Post not found");
+
+            return View(post);
+        }
+        [HttpPost("/admin/posts/{postId}/delete"), ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirm(int? postId)
+        {
+            if (postId == null) return NotFound("PostId not found");
+
+            var post = await _context.Posts.FindAsync(postId);
+            if (post == null) return NotFound("Post not found");
+
+            _context.Posts.Remove(post);
+            var postCategories = _context.PostCategories.Where(pc => pc.PostId == post.Id);
+            _context.PostCategories.RemoveRange(postCategories);
+
+            await _context.SaveChangesAsync();
+
+            StatusMessage = $"Deleted {post.Title} post";
+
+            return RedirectToAction(nameof(Index));
+        }
+
         private async Task<IEnumerable<Category>> GetTreeCategory()
         {
             var qr = _context.Categories
