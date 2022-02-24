@@ -37,6 +37,12 @@
     </div>
 </div>
 
+@{
+    var summernote = new SummernoteModel("#Description");
+}
+
 @section Scripts {
+    <partial name="_Summernote" model="@summernote" />
+    
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

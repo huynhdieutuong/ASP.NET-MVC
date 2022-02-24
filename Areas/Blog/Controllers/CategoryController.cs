@@ -107,9 +107,13 @@ namespace AppMVC.Areas.Blog.Controllers
                         canUpdate = CheckIsChildrenCat(fullCat.ChildrenCategory.ToList(), category.ParentId.Value, canUpdate);
                     }
 
-                    if (canUpdate && fullCat.ParentId != category.ParentId && fullCat.Id != category.ParentId)
+                    if (canUpdate && fullCat.Id != category.ParentId)
                     {
                         fullCat.ParentId = category.ParentId;
+                        fullCat.Title = category.Title;
+                        fullCat.Description = category.Description;
+                        fullCat.Slug = category.Slug;
+
                         _context.Categories.Update(fullCat);
                         await _context.SaveChangesAsync();
                         return RedirectToAction(nameof(Index));
