@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AppMVC.ExtendMethods;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 
 namespace AppMVC
@@ -145,6 +147,15 @@ namespace AppMVC
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            // 4.1 Setup static url Uploads
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), "Uploads")
+                ),
+                RequestPath = "/uploads"
+            });
 
             app.AddStatusCodePage(); // Custom Response Code 400 - 599
 
