@@ -58,3 +58,27 @@ body {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+.category-sidebar ul,
+.category-sidebar li {
+  list-style: none;
+  padding-left: 10px;
+}
+.category-sidebar a {
+  text-decoration: none;
+}
+.category-sidebar a:hover {
+  color: #a04747;
+}
+.category-sidebar a.active {
+  color: red;
+}
+.category-sidebar > ul > li > a {
+  font-weight: bold;
+}
+.category-sidebar h3 {
+  text-transform: uppercase;
+  font-size: 1.3em;
+  border-bottom: 1px solid blue;
+  padding-bottom: 10px;
+}

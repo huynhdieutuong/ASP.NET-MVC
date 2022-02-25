@@ -20,7 +20,7 @@ namespace AppMVC.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "ViewPost", new { area = "Blog" });
         }
 
         public IActionResult Privacy()

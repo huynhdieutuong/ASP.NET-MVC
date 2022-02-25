@@ -1,0 +1,26 @@
+.category-sidebar {
+  ul,
+  li {
+    list-style: none;
+    padding-left: 10px;
+  }
+  a {
+    text-decoration: none;
+    &:hover {
+      color: #a04747;
+    }
+    &.active {
+      color: red;
+    }
+  }
+  > ul > li > a {
+    font-weight: bold;
+  }
+
+  h3 {
+    text-transform: uppercase;
+    font-size: 1.3em;
+    border-bottom: 1px solid blue;
+    padding-bottom: 10px;
+  }
+}

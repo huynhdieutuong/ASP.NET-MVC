@@ -1,0 +1,17 @@
+@using AppMVC.Components
+
+<h1>View Post</h1>
+
+@section Sidebar 
+{
+  <div class="category-sidebar">
+    @await Component.InvokeAsync("CategorySidebar",
+      new CategorySidebar.CategorySidebarData() 
+      {
+        Categories = ViewBag.categories,
+        Level = 0,
+        CategorySlug = ViewBag.catSlug
+      }
+    )
+  </div>
+}

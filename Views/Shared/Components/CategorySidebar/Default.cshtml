@@ -1,0 +1,34 @@
+@using AppMVC.Components
+@model CategorySidebar.CategorySidebarData
+
+@if (Model.Level == 0) 
+{
+  <h3>
+    <a asp-controller="ViewPost" asp-action="Index" asp-route-catSlug="">
+      Categories
+    </a>
+  </h3> 
+}
+
+<ul>
+  @foreach (var category in Model.Categories)
+  {
+    var activeClass = category.Slug == Model.CategorySlug ? "active" : null;
+    <li>
+      <a class="@activeClass" asp-controller="ViewPost" asp-action="Index" asp-route-catSlug="@category.Slug">
+          @category.Title
+      </a>
+      @if (category.ChildrenCategory?.Count > 0) 
+      {
+        @await Component.InvokeAsync("CategorySidebar",
+          new CategorySidebar.CategorySidebarData() 
+          {
+            Categories = category.ChildrenCategory.ToList(),
+            Level = Model.Level + 1,
+            CategorySlug = Model.CategorySlug
+          }
+        )
+      }
+    </li>
+  }
+</ul>
