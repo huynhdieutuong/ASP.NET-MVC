@@ -1,6 +1,39 @@
 @using AppMVC.Components
+@model List<Post>
 
-<h1>View Post</h1>
+@{
+  ViewData["Title"] = "All posts in " + (ViewBag.catSlug == null ? "all categories" : ViewBag.Category.Title);
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<hr>
+
+@foreach (var post in Model)
+{
+  var postCategories = post.PostCategories.Select(pc => pc.Category.Title).ToArray();
+    <div class="media border-bottom mb-3 pb-3">
+        <img src="/uploads/no-photo.jpg" class="mr-3 w-25">
+        <div class="media-body">
+            <h5 class="mt-0">
+                <a asp-controller="ViewPost" asp-action="Detail" asp-route-postslug="@post.Slug">
+                    @post.Title
+                </a>
+            </h5>
+            @post.Content.Substring(0, 200) ...
+            <div>
+                Category:
+                <strong class="text-danger">
+                    @string.Join(", ", postCategories)
+                </strong> 
+            </div>
+            <div class="author-row">
+                Author: <strong>@post.Author.UserName</strong> |
+                Date updated: <i>@post.DateUpdated.ToShortDateString()</i>
+            </div>
+        </div>
+    </div>
+}
 
 @section Sidebar 
 {
@@ -15,3 +48,5 @@
     )
   </div>
 }
+
+<partial name="_Pagination" model="@ViewBag.paginationModel" />

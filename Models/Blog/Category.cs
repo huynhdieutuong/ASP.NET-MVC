@@ -32,5 +32,17 @@ namespace AppMVC.Models.Blog
 
         [Display(Name = "Children category")]
         public ICollection<Category> ChildrenCategory { get; set; }
+
+        public void GetChildIds(ICollection<Category> childCats, List<int> catIds)
+        {
+            if (childCats?.Count > 0)
+            {
+                foreach (var childCat in childCats)
+                {
+                    catIds.Add(childCat.Id);
+                    GetChildIds(childCat.ChildrenCategory, catIds);
+                }
+            }
+        }
     }
 }
