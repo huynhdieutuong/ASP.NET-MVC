@@ -53,3 +53,14 @@ dotnet ef database update
 3. dotnet ef migrations add AddIdentity & dotnet ef database update
 4. Register & Config Identity in Startup
 5. Make sure have 2 middlewares: app.UseAuthentication(); app.UseAuthorization();
+
+## Upgrate .NET 6.0
+
+1. Check version to make sure using `dotnet --version` (6.0)
+2. `<TargetFramework>net6.0</TargetFramework>`
+3. Upgrade all package to the latest version:
+
+- `dotnet list package` to list all package, then replace > to dotnet add package, copy all list to upgrade
+- `dotnet add package Name`
+- `dotnet restore` to check which package can't upgrade
+- `dotnet build` to make sure success
