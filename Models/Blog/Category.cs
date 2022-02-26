@@ -44,5 +44,21 @@ namespace AppMVC.Models.Blog
                 }
             }
         }
+
+        public List<Category> GetParentsList()
+        {
+            List<Category> parentsList = new List<Category>();
+            parentsList.Add(this);
+
+            var parent = this.ParentCategory;
+            while (parent != null)
+            {
+                parentsList.Add(parent);
+                parent = parent.ParentCategory;
+            }
+
+            parentsList.Reverse();
+            return parentsList;
+        }
     }
 }

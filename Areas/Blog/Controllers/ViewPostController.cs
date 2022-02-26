@@ -77,13 +77,38 @@ namespace AppMVC.Areas.Blog.Controllers
             ViewBag.paginationModel = paginationModel;
             posts = posts.Skip((page - 1) * POST_PER_PAGE).Take(POST_PER_PAGE);
 
+            ViewBag.parentsList = category?.GetParentsList();
+
             return View(posts.ToList());
         }
 
         [Route("/posts/{postSlug}.html")]
         public IActionResult Details(string postSlug)
         {
-            return View();
+            if (postSlug == null) return NotFound("PostSlug not found");
+
+            var post = _context.Posts
+                        .Where(p => p.Slug == postSlug)
+                        .Include(p => p.Author)
+                        .Include(p => p.PostCategories)
+                        .ThenInclude(pc => pc.Category)
+                        .FirstOrDefault();
+            if (post == null) return NotFound("Post not found");
+
+            // Get other posts the same category
+            List<int> postCatIds = post.PostCategories.Select(pc => pc.CategoryId).ToList();
+            List<Post> otherPosts = _context.Posts
+                                        .Where(p => p.PostCategories.Any(pc => postCatIds.Contains(pc.CategoryId)))
+                                        .Where(p => p.Id != post.Id)
+                                        .OrderByDescending(p => p.DateUpdated)
+                                        .Take(5)
+                                        .ToList();
+
+            ViewBag.categories = GetCategories();
+            ViewBag.parentsList = post.PostCategories.FirstOrDefault()?.Category.GetParentsList();
+            ViewBag.otherPosts = otherPosts;
+
+            return View(post);
         }
 
         private List<Category> GetCategories()

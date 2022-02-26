@@ -1,1 +1,48 @@
-<h1>View Details</h1>
+@using AppMVC.Components
+@model Post
+
+@{
+  ViewData["Title"] = @Model.Title;
+}
+
+@await Component.InvokeAsync("BreadCrumb", ViewBag.parentsList)
+
+<div class="detail-post">
+    <h1>@Model.Title</h1>
+    <div class="sapo">
+        @Model.Content.Substring(0, 200) ...
+    </div>
+    <div>
+        <i>Updated: @Model.DateUpdated</i> / 
+        Author: <strong>@Model.Author.UserName</strong>
+    </div>
+    <hr>
+
+    @Html.Raw(Model.Content)
+
+</div>
+
+@section Sidebar
+{
+  <div class="category-sidebar">
+    @await Component.InvokeAsync("CategorySidebar",
+      new CategorySidebar.CategorySidebarData()
+      {
+        Categories = ViewBag.categories,
+        Level = 0,
+        CategorySlug = ViewBag.catSlug
+      }
+    )
+  </div>
+
+  <ul class="list-group">
+    @foreach (var post in ViewBag.otherPosts)
+    {
+        <li class="list-group-item">
+            <a asp-controller="ViewPost" asp-action="Details" asp-route-postSlug="@post.Slug">
+                @post.Title
+            </a>
+        </li>
+    }
+  </ul> 
+}

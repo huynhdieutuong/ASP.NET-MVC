@@ -82,3 +82,15 @@ body {
   border-bottom: 1px solid blue;
   padding-bottom: 10px;
 }
+
+.detail-post h1 {
+  font-weight: 300;
+}
+.detail-post .sapo {
+  font-weight: 500;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+.detail-post img {
+  max-width: 100%;
+}

@@ -5,6 +5,8 @@
   ViewData["Title"] = "All posts in " + (ViewBag.catSlug == null ? "all categories" : ViewBag.Category.Title);
 }
 
+@await Component.InvokeAsync("BreadCrumb", ViewBag.parentsList)
+
 <h1>@ViewData["Title"]</h1>
 
 <hr>
@@ -16,7 +18,7 @@
         <img src="/uploads/no-photo.jpg" class="mr-3 w-25">
         <div class="media-body">
             <h5 class="mt-0">
-                <a asp-controller="ViewPost" asp-action="Detail" asp-route-postslug="@post.Slug">
+                <a asp-controller="ViewPost" asp-action="Details" asp-route-postSlug="@post.Slug">
                     @post.Title
                 </a>
             </h5>
