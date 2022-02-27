@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AppMVC.Areas.Identity.Data;
 using AppMVC.Models;
 using AppMVC.Models.Blog;
+using AppMVC.Models.Product;
 using Bogus;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -63,11 +64,46 @@ namespace AppMVC.Areas.Database.Controllers
 
         public async Task<IActionResult> SeedDataAsync()
         {
-            await SeedPostCategory();
+            //await SeedPostCategory();
+            await SeedProductCategory();
 
             StatusMessage = "Seeded Database";
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task SeedProductCategory()
+        {
+            _dbContext.PCategories.RemoveRange(_dbContext.PCategories.Where(c => c.Description.Contains("[fakeData]")));
+            _dbContext.SaveChanges();
+
+            //Fake product categories
+            var fakerCategory = new Faker<PCategory>();
+            int numCat = 1;
+            fakerCategory.RuleFor(c => c.Title, f => $"Product category {numCat++} " + f.Lorem.Sentence(1, 2).Trim('.'));
+            fakerCategory.RuleFor(c => c.Description, f => f.Lorem.Sentences(5) + "[fakeData]");
+            fakerCategory.RuleFor(c => c.Slug, f => f.Lorem.Slug());
+
+            var cat1 = fakerCategory.Generate();
+            var cat11 = fakerCategory.Generate();
+            var cat12 = fakerCategory.Generate();
+            var cat111 = fakerCategory.Generate();
+            var cat2 = fakerCategory.Generate();
+            var cat21 = fakerCategory.Generate();
+            var cat22 = fakerCategory.Generate();
+            var cat221 = fakerCategory.Generate();
+
+            cat11.ParentCategory = cat1;
+            cat12.ParentCategory = cat1;
+            cat111.ParentCategory = cat11;
+            cat21.ParentCategory = cat2;
+            cat22.ParentCategory = cat2;
+            cat221.ParentCategory = cat22;
+
+            var categories = new PCategory[] { cat1, cat11, cat12, cat111, cat2, cat21, cat22, cat221 };
+            await _dbContext.PCategories.AddRangeAsync(categories);
+
+            await _dbContext.SaveChangesAsync();
         }
 
         private async Task SeedPostCategory()
@@ -75,6 +111,7 @@ namespace AppMVC.Areas.Database.Controllers
             // Remove fake categories and posts before fake
             _dbContext.Categories.RemoveRange(_dbContext.Categories.Where(c => c.Description.Contains("[fakeData]")));
             _dbContext.Posts.RemoveRange(_dbContext.Posts.Where(p => p.Content.Contains("[fakeData]")));
+            _dbContext.SaveChanges();
 
             // Fake categories
             var fakerCategory = new Faker<Category>();
@@ -131,5 +168,7 @@ namespace AppMVC.Areas.Database.Controllers
 
             await _dbContext.SaveChangesAsync();
         }
+
+
     }
 }
