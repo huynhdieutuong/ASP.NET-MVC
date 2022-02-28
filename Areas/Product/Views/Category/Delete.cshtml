@@ -1,0 +1,19 @@
+@model PCategory
+
+@{
+    ViewData["Title"] = "Delete category";
+    Layout = "_Layout";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <p>Are you sure to delete <strong>@Model.Title</strong> category?</p>
+            <div class="form-group">
+                <input type="submit" value="Delete" class="btn btn-danger" />
+            </div>
+        </form>
+    </div>
+</div>

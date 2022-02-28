@@ -1,0 +1,62 @@
+@model IEnumerable<PCategory>
+
+@{
+  ViewData["Title"] = "Product categories";
+  Layout = "_Layout";
+}
+
+<partial name="_StatusMessage" />
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+  <a asp-action="Create" class="btn btn-primary">Create category</a>
+</p>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>
+        @Html.DisplayNameFor(m => m.Title)
+      </th>
+      <th>
+        @Html.DisplayNameFor(m => m.Slug)
+      </th>
+      <th>
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    @if (Model.Count() > 0) {
+      await RenderTreeCategory(Model.ToList(), 0);
+    }
+  </tbody>
+</table>
+
+@{
+  async Task RenderTreeCategory(List<PCategory> categories, int level) {
+    string prefix = string.Concat(Enumerable.Repeat("&nbsp;&nbsp;&nbsp;&nbsp;", level));
+    @foreach (var category in categories)
+    {
+      <tr>
+        <td>
+          @Html.Raw(@prefix) 
+          <a asp-action="Details" asp-route-catId="@category.Id">
+            @category.Title
+          </a>
+        </td>
+        <td>
+          /@category.Slug
+        </td>
+        <td>
+          <a class="btn btn-warning" asp-action="Edit" asp-route-catId="@category.Id">Edit</a>
+          <a class="btn btn-danger" asp-action="Delete" asp-route-catId="@category.Id">Delete</a>
+        </td>
+      </tr>
+      @if (category.ChildrenCategories?.Count > 0) {
+        await RenderTreeCategory(category.ChildrenCategories.ToList(), level + 1);
+      }
+    }  
+  }
+}

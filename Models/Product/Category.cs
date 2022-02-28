@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,10 +20,9 @@ namespace AppMVC.Models.Product
         [Display(Name = "Description")]
         public string Description { get; set; }
 
-        [Required(ErrorMessage = "{0} is required")]
         [StringLength(100, MinimumLength = 3, ErrorMessage = "{0} must be between {2} - {1} chars")]
-        [RegularExpression("^[a-z0-9]*$", ErrorMessage = "Only accept [a-z] or [0-9] chars")]
-        [Display(Name = "Current url")]
+        [RegularExpression("^[a-z0-9-]*$", ErrorMessage = "Only accept [a-z] or [0-9] chars")]
+        [Display(Name = "Current url", Prompt = "If slug isn't entered, it will be generated based on Title")]
         public string Slug { get; set; }
 
         public int? ParentId { get; set; }
@@ -31,5 +31,25 @@ namespace AppMVC.Models.Product
         public PCategory ParentCategory { get; set; }
 
         public ICollection<PCategory> ChildrenCategories { get; set; }
+
+        public List<PCategory> GetChildrenList()
+        {
+            PCategory category = this;
+            List<PCategory> childrenList = new List<PCategory>();
+            AddChildren(childrenList, category);
+            return childrenList;
+        }
+
+        private void AddChildren(List<PCategory> childrenList, PCategory category)
+        {
+            if (category.ChildrenCategories?.Count > 0)
+            {
+                foreach (PCategory child in category.ChildrenCategories)
+                {
+                    childrenList.Add(child);
+                    AddChildren(childrenList, child);
+                }
+            }
+        }
     }
 }
