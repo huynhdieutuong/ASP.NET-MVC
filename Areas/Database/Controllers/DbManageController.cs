@@ -75,6 +75,7 @@ namespace AppMVC.Areas.Database.Controllers
         private async Task SeedProductCategory()
         {
             _dbContext.PCategories.RemoveRange(_dbContext.PCategories.Where(c => c.Description.Contains("[fakeData]")));
+            _dbContext.Products.RemoveRange(_dbContext.Products.Where(c => c.Description.Contains("[fakeData]")));
             _dbContext.SaveChanges();
 
             //Fake product categories
@@ -102,6 +103,39 @@ namespace AppMVC.Areas.Database.Controllers
 
             var categories = new PCategory[] { cat1, cat11, cat12, cat111, cat2, cat21, cat22, cat221 };
             await _dbContext.PCategories.AddRangeAsync(categories);
+
+            // Fake products
+            var randomCatIndex = new Random();
+            int numProduct = 1;
+            var user = _userManager.GetUserAsync(this.User).Result;
+
+            var fakerProduct = new Faker<ProductModel>();
+            fakerProduct.RuleFor(p => p.Title, f => $"Product {numProduct++} " + f.Commerce.ProductName());
+            fakerProduct.RuleFor(p => p.Description, f => f.Lorem.Sentences(5) + "fakeData");
+            fakerProduct.RuleFor(p => p.Content, f => f.Lorem.Paragraphs(7));
+            fakerProduct.RuleFor(p => p.Slug, f => f.Lorem.Slug());
+            fakerProduct.RuleFor(p => p.Price, f => int.Parse(f.Commerce.Price(500, 1000, 0)));
+            fakerProduct.RuleFor(p => p.AuthorId, f => user.Id);
+            fakerProduct.RuleFor(p => p.Published, f => true);
+            fakerProduct.RuleFor(p => p.DateCreated, f => f.Date.Between(new DateTime(2021, 1, 1), new DateTime(2022, 2, 1)));
+
+            List<ProductModel> products = new List<ProductModel>();
+            List<ProductCategory> productCategories = new List<ProductCategory>();
+
+            for (int i = 0; i < 40; i++)
+            {
+                var product = fakerProduct.Generate();
+                product.DateUpdated = product.DateCreated;
+                products.Add(product);
+
+                productCategories.Add(new ProductCategory()
+                {
+                    Product = product,
+                    Category = categories[randomCatIndex.Next(8)]
+                });
+            }
+            await _dbContext.AddRangeAsync(products);
+            await _dbContext.AddRangeAsync(productCategories);
 
             await _dbContext.SaveChangesAsync();
         }

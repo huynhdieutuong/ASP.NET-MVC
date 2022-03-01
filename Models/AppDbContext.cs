@@ -55,6 +55,17 @@ namespace AppMVC.Models
                 entity.HasIndex(c => c.Slug)
                     .IsUnique();
             });
+
+            modelBuilder.Entity<ProductModel>(entity =>
+            {
+                entity.HasIndex(p => p.Slug)
+                    .IsUnique();
+            });
+
+            modelBuilder.Entity<ProductCategory>(entity =>
+            {
+                entity.HasKey(p => new { p.ProductId, p.CategoryId });
+            });
         }
 
         public DbSet<Contact> Contacts { get; set; }
@@ -63,6 +74,8 @@ namespace AppMVC.Models
         public DbSet<PostCategory> PostCategories { get; set; }
 
         public DbSet<PCategory> PCategories { get; set; }
+        public DbSet<ProductModel> Products { get; set; }
+        public DbSet<ProductCategory> ProductCategories { get; set; }
 
     }
 }
