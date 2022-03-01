@@ -1,0 +1,79 @@
+@model IEnumerable<ProductModel>
+
+@{
+    ViewData["Title"] = "Products";
+    Layout = "_Layout";
+}
+
+<partial name="_StatusMessage" />
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Create product</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(m => m.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.AuthorId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.DateCreated) <br/>
+                @Html.DisplayNameFor(m => m.DateUpdated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.Published)
+            </th>
+            <th>Categories</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var product in Model) {
+        <tr>
+            <td>
+
+                <a title="View Details" asp-action="Details" asp-route-productId="@product.Id">
+                    <strong>@Html.DisplayFor(m => product.Title)</strong>
+                </a>
+            </td>
+            <td>
+                @Html.DisplayFor(m => product.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(m => product.Author.UserName)
+            </td>
+            <td>
+                @product.DateCreated.ToShortDateString()
+                <br>
+                @product.DateUpdated.ToShortDateString()
+            </td>
+
+            <td>
+                @Html.DisplayFor(m => product.Published)
+            </td>
+            <td>
+                @Html.Raw(string.Join("<br>",
+                    product.ProductCategories
+                    .Select(p => p.Category)
+                    .ToList()
+                    .Select(c => $"<i>{c.Title}</i>")))
+            </td>
+
+            <td>
+                <a class="btn btn-warning" asp-action="Edit" asp-route-productId="@product.Id">Edit</a>
+                <a class="btn btn-danger" asp-action="Delete" asp-route-productId="@product.Id">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<partial name="_Pagination" model="@ViewBag.paginationModel" />
