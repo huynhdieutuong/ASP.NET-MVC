@@ -49,5 +49,7 @@ namespace AppMVC.Models.Product
         public DateTime DateUpdated { get; set; }
 
         public List<ProductCategory> ProductCategories { get; set; }
+
+        public List<ProductPhoto> Photos { get; set; }
     }
 }

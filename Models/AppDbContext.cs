@@ -76,6 +76,7 @@ namespace AppMVC.Models
         public DbSet<PCategory> PCategories { get; set; }
         public DbSet<ProductModel> Products { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
+        public DbSet<ProductPhoto> ProductPhotos { get; set; }
 
     }
 }
