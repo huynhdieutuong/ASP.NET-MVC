@@ -22,6 +22,7 @@
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
+            @await Component.InvokeAsync("UploadProductPhoto", Model.Id)
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <input asp-for="Description" class="form-control" />
@@ -71,4 +72,106 @@
     </script>
     
     <partial name="_Summernote" model="@summernote" />
+
+    <script>
+        $(document).ready(function() {
+            loadPhotos();
+        });
+
+        function autoUploadPhoto() {
+            let inputEl = document.getElementById("select-file-upload");
+            if (inputEl.files.length === 0) return;
+            const file = inputEl.files[0];
+
+            const box = $("#box-photo-upload");
+            box.empty();
+            const productId = box.data("id");
+
+            let formData = new FormData();
+            formData.append("productId", productId);
+            formData.append("FileUpload", file);
+
+            const url = "@Url.Action("UploadPhoto")";
+
+            $.ajax({
+                data: formData,
+                cache: false,
+                url: url,
+                type: "POST",
+                contentType: false,
+                processData: false,
+                success: data => {
+                    if (data.success) {
+                        loadPhotos();
+                    }
+                }
+            })
+        }
+
+        function clickBtnToUpload() {
+            $("#select-file-upload").click();
+        }
+
+        function loadPhotos () {
+            const box = $("#box-photo-upload");
+            box.empty();
+            const productId = box.data("id");
+
+            let formData = new FormData();
+            formData.append("productId", productId);
+
+            const urlListPhoto = "@Url.Action("ListPhotos")";
+
+            $.ajax({
+                data: formData,
+                cache: false,
+                url: urlListPhoto,
+                type: "POST",
+                contentType: false,
+                processData: false,
+                success: data => {
+                    if (data.success) {
+                        let html = '';
+                        data.photos.forEach(photo => {
+                            html += `<div class="photo-detail w-25 p-1">
+                                        <img class="w-100" src="${photo.path}" />
+                                        <span class="btn btn-danger delete-btn" data-id="${photo.id}">Delete</span>
+                                    </div>`;
+                        });
+                        box.append(html);
+                        setClickDeletePhoto();
+                    }
+                }
+            })
+        }
+
+        function setClickDeletePhoto() {
+            $("#box-photo-upload .photo-detail span").click(function () {
+                if (confirm("Are you sure to delete photo?") != true) return;
+
+                const spanBtn = $(this);
+                const photoId = spanBtn.data("id");
+            
+                let formData = new FormData();
+                formData.append("photoId", photoId);
+
+                const url = "@Url.Action("DeletePhoto")";
+
+                $.ajax({
+                    data: formData,
+                    cache: false,
+                    url: url,
+                    type: "DELETE",
+                    contentType: false,
+                    processData: false,
+                    success: data => {
+                        if (data.success) {
+                            loadPhotos();
+                        }
+                    }
+                })
+            })
+        }
+
+    </script>
 }

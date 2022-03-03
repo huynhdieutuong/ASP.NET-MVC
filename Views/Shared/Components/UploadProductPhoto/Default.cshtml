@@ -1,0 +1,8 @@
+@model dynamic
+
+<input id="select-file-upload" type="file" class="collapse" onchange="autoUploadPhoto()" />
+<button type="button" class="btn btn-primary" onclick="clickBtnToUpload()" >Upload product photo</button>
+
+<hr />
+
+<div id="box-photo-upload" class="d-flex flex-wrap photo-upload" data-id="@Model"></div>
