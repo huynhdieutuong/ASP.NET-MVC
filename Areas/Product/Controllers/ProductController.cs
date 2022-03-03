@@ -380,7 +380,45 @@ namespace AppMVC.Areas.Product.Controllers
                 );
         }
 
-        private async Task<IEnumerable<PCategory>> GetTreeCategories()
+        [HttpDelete("/admin/products/delete-photo")]
+        public async Task<ActionResult> DeletePhoto(int? photoId)
+        { 
+            if (photoId == null)
+            {
+                return Json(
+                    new
+                    {
+                        success = false,
+                        message = "PhotoId not found"
+                    });
+            }
+
+            var photo = await _context.ProductPhotos.FirstOrDefaultAsync(p => p.Id == photoId);
+            if (photo == null)
+            {
+                return Json(
+                    new
+                    {
+                        success = false,
+                        message = "Photo not found"
+                    });
+            }
+
+            _context.ProductPhotos.Remove(photo);
+            await _context.SaveChangesAsync();
+
+            var fileName = $"Uploads/Products/{photo.FileName}";
+            System.IO.File.Delete(fileName);
+
+            return Json(
+                    new
+                    {
+                        success = true,
+                        message = "Delete photo successfully"
+                    });
+        }
+
+            private async Task<IEnumerable<PCategory>> GetTreeCategories()
         {
             List<PCategory> treeCategories = new List<PCategory>();
             var qr = _context.PCategories.Include(c => c.ChildrenCategories);

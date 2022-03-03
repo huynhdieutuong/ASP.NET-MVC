@@ -57,11 +57,39 @@
                                     </div>`;
                         });
                         box.append(html);
+                        setClickDeletePhoto();
                     }
                 }
             })
+        }
 
+        function setClickDeletePhoto() {
+            $("#box-photo-upload .photo-detail span").click(function () {
+                if (confirm("Are you sure to delete photo?") != true) return;
 
+                const spanBtn = $(this);
+                const photoId = spanBtn.data("id");
+            
+                let formData = new FormData();
+                formData.append("photoId", photoId);
+
+                const url = "@Url.Action("DeletePhoto")";
+
+                $.ajax({
+                    data: formData,
+                    cache: false,
+                    url: url,
+                    type: "DELETE",
+                    contentType: false,
+                    processData: false,
+                    success: data => {
+                        if (data.success) {
+                            console.log(data);
+                            loadPhotos();
+                        }
+                    }
+                })
+            })
         }
 
     </script>
