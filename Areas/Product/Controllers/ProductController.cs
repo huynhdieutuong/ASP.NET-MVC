@@ -298,6 +298,8 @@ namespace AppMVC.Areas.Product.Controllers
             var product = await _context.Products
                                 .Include(p => p.Photos)
                                 .FirstOrDefaultAsync(p => p.Id == productId);
+            if (product == null) return NotFound("Product not found");
+
             ViewData["product"] = product;
 
             return View();
@@ -311,6 +313,8 @@ namespace AppMVC.Areas.Product.Controllers
             var product = await _context.Products
                                 .Include(p => p.Photos)
                                 .FirstOrDefaultAsync(p => p.Id == productId);
+            if (product == null) return NotFound("Product not found");
+
             ViewData["product"] = product;
 
             if (file.FileUpload == null) return NotFound("File not found");
@@ -331,6 +335,49 @@ namespace AppMVC.Areas.Product.Controllers
             await _context.SaveChangesAsync();
 
             return View();
+        }
+
+        [HttpPost("/admin/products/load-photos")]
+        public async Task<ActionResult> ListPhotos(int? productId)
+        {
+            if (productId == null)
+            {
+                return Json(
+                        new
+                        {
+                            success = false,
+                            message = "ProductId not found"
+                        }
+                    );
+            }
+
+            var product = await _context.Products
+                                .Include(p => p.Photos)
+                                .FirstOrDefaultAsync(p => p.Id == productId);
+            if (product == null)
+            {
+                return Json(
+                        new
+                        {
+                            success = false,
+                            message = "Product not found"
+                        }
+                    );
+            }
+
+            var photos = product.Photos.Select(photo => new
+            {
+                id = photo.Id,
+                path = $"/uploads/Products/{photo.FileName}"
+            });
+
+            return Json(
+                    new
+                    {
+                        success = true,
+                        photos = photos
+                    }
+                );
         }
 
         private async Task<IEnumerable<PCategory>> GetTreeCategories()

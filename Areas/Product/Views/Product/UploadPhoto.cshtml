@@ -21,12 +21,48 @@
 
 @if (@product.Photos.Count > 0) {
     <div id="box-photo-upload" class="d-flex flex-wrap photo-upload" data-id="@product.Id">
-        @foreach (var photo in product.Photos)
-        {
-            <div class="photo-detail w-25 p-1">
-                <img class="w-100" src="/uploads/Products/@photo.FileName" />
-                <span class="btn btn-danger delete-btn" data-id="@photo.Id">Delete</span>
-            </div>
-        }
     </div>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            loadPhotos();
+        });
+
+        function loadPhotos () {
+            const box = $("#box-photo-upload");
+            box.empty();
+            const productId = box.data("id");
+
+            let formData = new FormData();
+            formData.append("productId", productId);
+
+            const urlListPhoto = "@Url.Action("ListPhotos")";
+
+            $.ajax({
+                data: formData,
+                cache: false,
+                url: urlListPhoto,
+                type: "POST",
+                contentType: false,
+                processData: false,
+                success: data => {
+                    if (data.success) {
+                        let html = '';
+                        data.photos.forEach(photo => {
+                            html += `<div class="photo-detail w-25 p-1">
+                                        <img class="w-100" src="${photo.path}" />
+                                        <span class="btn btn-danger delete-btn" data-id="${photo.id}">Delete</span>
+                                    </div>`;
+                        });
+                        box.append(html);
+                    }
+                }
+            })
+
+
+        }
+
+    </script>
 }
