@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -37,7 +38,7 @@ namespace AppMVC.Areas.Product.Controllers
         public string StatusMessage { get; set; }
 
         [HttpGet("/admin/products")]
-        public async Task<ActionResult> Index([FromQuery(Name ="p")] int page = 1)
+        public async Task<ActionResult> Index([FromQuery(Name = "p")] int page = 1)
         {
             var qr = _context.Products
                         .Include(p => p.Author)
@@ -251,7 +252,7 @@ namespace AppMVC.Areas.Product.Controllers
         }
 
         [HttpGet("/admin/products/{productId}/delete")]
-        public async Task<ActionResult> Delete (int? productId)
+        public async Task<ActionResult> Delete(int? productId)
         {
             if (productId == null) return NotFound("PostId not found");
 
@@ -287,6 +288,49 @@ namespace AppMVC.Areas.Product.Controllers
                 _logger.LogError(ex.Message);
                 return View(product);
             }
+        }
+
+        [HttpGet("/admin/products/{productId}/upload-photo")]
+        public async Task<ActionResult> UploadPhoto(int? productId)
+        {
+            if (productId == null) return NotFound("ProductId not found");
+
+            var product = await _context.Products
+                                .Include(p => p.Photos)
+                                .FirstOrDefaultAsync(p => p.Id == productId);
+            ViewData["product"] = product;
+
+            return View();
+        }
+
+        [HttpPost("/admin/products/{productId}/upload-photo")]
+        public async Task<ActionResult> UploadPhoto(int? productId, UploadOneFile file)
+        {
+            if (productId == null) return NotFound("ProductId not found");
+
+            var product = await _context.Products
+                                .Include(p => p.Photos)
+                                .FirstOrDefaultAsync(p => p.Id == productId);
+            ViewData["product"] = product;
+
+            if (file.FileUpload == null) return NotFound("File not found");
+
+            //Upload file
+            var fileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + Path.GetExtension(file.FileUpload.FileName);
+            var filePath = Path.Combine("Uploads", "Products", fileName);
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.FileUpload.CopyToAsync(fileStream);
+            }
+
+            _context.ProductPhotos.Add(new ProductPhoto()
+            {
+                ProductId = product.Id,
+                FileName = fileName,
+            });
+            await _context.SaveChangesAsync();
+
+            return View();
         }
 
         private async Task<IEnumerable<PCategory>> GetTreeCategories()

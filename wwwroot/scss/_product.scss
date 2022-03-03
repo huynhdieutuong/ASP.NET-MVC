@@ -1,0 +1,21 @@
+.photo-detail {
+  position: relative;
+
+  .delete-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+  }
+
+  &:hover {
+    .delete-btn {
+      display: block;
+      cursor: pointer;
+    }
+    img {
+      opacity: 0.5;
+    }
+  }
+}

@@ -1,0 +1,32 @@
+﻿@using AppMVC.Models.Product
+@using AppMVC.Areas.Product.Models
+
+@model UploadOneFile
+
+@{
+    ProductModel product = ViewData["product"] as ProductModel;
+}
+
+<h1>Upload photo: @product.Title</h1>
+
+<form method="post" enctype="multipart/form-data">
+    <label asp-for="FileUpload"></label>
+    <input asp-for="FileUpload" />
+    <span asp-validation-for="FileUpload"></span>
+
+    <button class="btn btn-primary" asp-action="UploadPhoto" asp-route-productId="@product.Id">Upload</button>
+</form>
+
+<hr />
+
+@if (@product.Photos.Count > 0) {
+    <div id="box-photo-upload" class="d-flex flex-wrap photo-upload" data-id="@product.Id">
+        @foreach (var photo in product.Photos)
+        {
+            <div class="photo-detail w-25 p-1">
+                <img class="w-100" src="/uploads/Products/@photo.FileName" />
+                <span class="btn btn-danger delete-btn" data-id="@photo.Id">Delete</span>
+            </div>
+        }
+    </div>
+}

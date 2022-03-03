@@ -94,3 +94,21 @@ body {
 .detail-post img {
   max-width: 100%;
 }
+
+.photo-detail {
+  position: relative;
+}
+.photo-detail .delete-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+}
+.photo-detail:hover .delete-btn {
+  display: block;
+  cursor: pointer;
+}
+.photo-detail:hover img {
+  opacity: 0.5;
+}
