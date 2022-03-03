@@ -9,26 +9,52 @@
 
 <h1>Upload photo: @product.Title</h1>
 
-<form method="post" enctype="multipart/form-data">
-    <label asp-for="FileUpload"></label>
-    <input asp-for="FileUpload" />
-    <span asp-validation-for="FileUpload"></span>
-
-    <button class="btn btn-primary" asp-action="UploadPhoto" asp-route-productId="@product.Id">Upload</button>
-</form>
+<input id="select-file-upload" type="file" class="collapse" onchange="autoUploadPhoto()" />
+<button class="btn btn-primary" onclick="clickBtnToUpload()" >Upload</button>
 
 <hr />
 
-@if (@product.Photos.Count > 0) {
-    <div id="box-photo-upload" class="d-flex flex-wrap photo-upload" data-id="@product.Id">
-    </div>
-}
+<div id="box-photo-upload" class="d-flex flex-wrap photo-upload" data-id="@product.Id"></div>
 
 @section Scripts {
     <script>
         $(document).ready(function() {
             loadPhotos();
         });
+
+        function autoUploadPhoto() {
+            let inputEl = document.getElementById("select-file-upload");
+            if (inputEl.files.length === 0) return;
+            const file = inputEl.files[0];
+
+            const box = $("#box-photo-upload");
+            box.empty();
+            const productId = box.data("id");
+
+            let formData = new FormData();
+            formData.append("productId", productId);
+            formData.append("FileUpload", file);
+
+            const url = "@Url.Action("UploadPhoto")";
+
+            $.ajax({
+                data: formData,
+                cache: false,
+                url: url,
+                type: "POST",
+                contentType: false,
+                processData: false,
+                success: data => {
+                    if (data.success) {
+                        loadPhotos();
+                    }
+                }
+            })
+        }
+
+        function clickBtnToUpload() {
+            $("#select-file-upload").click();
+        }
 
         function loadPhotos () {
             const box = $("#box-photo-upload");
@@ -84,7 +110,6 @@
                     processData: false,
                     success: data => {
                         if (data.success) {
-                            console.log(data);
                             loadPhotos();
                         }
                     }

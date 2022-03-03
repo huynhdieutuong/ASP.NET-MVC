@@ -305,19 +305,43 @@ namespace AppMVC.Areas.Product.Controllers
             return View();
         }
 
-        [HttpPost("/admin/products/{productId}/upload-photo")]
+        [HttpPost("/admin/products/upload-photo")]
         public async Task<ActionResult> UploadPhoto(int? productId, UploadOneFile file)
         {
-            if (productId == null) return NotFound("ProductId not found");
+            if (productId == null)
+            {
+                return Json(
+                    new
+                    {
+                        success = false,
+                        message = "ProductId not found"
+                    });
+            }
 
             var product = await _context.Products
                                 .Include(p => p.Photos)
                                 .FirstOrDefaultAsync(p => p.Id == productId);
-            if (product == null) return NotFound("Product not found");
+            if (product == null)
+            {
+                return Json(
+                        new
+                        {
+                            success = false,
+                            message = "Product not found"
+                        }
+                    );
+            }
 
-            ViewData["product"] = product;
-
-            if (file.FileUpload == null) return NotFound("File not found");
+            if (file.FileUpload == null)
+            {
+                return Json(
+                        new
+                        {
+                            success = false,
+                            message = "File not found"
+                        }
+                    );
+            }
 
             //Upload file
             var fileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + Path.GetExtension(file.FileUpload.FileName);
@@ -334,7 +358,12 @@ namespace AppMVC.Areas.Product.Controllers
             });
             await _context.SaveChangesAsync();
 
-            return View();
+            return Json(
+                new
+                {
+                    success = true,
+                    message = "Upload photo successfully"
+                });
         }
 
         [HttpPost("/admin/products/load-photos")]
@@ -418,7 +447,7 @@ namespace AppMVC.Areas.Product.Controllers
                     });
         }
 
-            private async Task<IEnumerable<PCategory>> GetTreeCategories()
+        private async Task<IEnumerable<PCategory>> GetTreeCategories()
         {
             List<PCategory> treeCategories = new List<PCategory>();
             var qr = _context.PCategories.Include(c => c.ChildrenCategories);
