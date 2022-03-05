@@ -5,7 +5,8 @@
   ViewData["Title"] = "All posts in " + (ViewBag.catSlug == null ? "all categories" : ViewBag.Category.Title);
 }
 
-@await Component.InvokeAsync("BreadCrumb", ViewBag.parentsList)
+@if (ViewBag.parentsList != null)
+  @await Component.InvokeAsync("BreadCrumb", ViewBag.parentsList)
 
 <h1>@ViewData["Title"]</h1>
 

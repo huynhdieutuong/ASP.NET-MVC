@@ -112,3 +112,15 @@ body {
 .photo-detail:hover img {
   opacity: 0.5;
 }
+
+.detail-product h1 {
+  font-weight: 300;
+}
+.detail-product .sapo {
+  font-weight: 500;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+.detail-product img {
+  max-width: 100%;
+}

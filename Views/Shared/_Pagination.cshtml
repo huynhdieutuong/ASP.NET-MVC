@@ -17,7 +17,7 @@
   }
 
   @* Way 1: Cal endLeft and endRight, then add to listPage *@
-  @* int pagesInRight = (int)Math.Floor((decimal)(pageRage - 1)/2);
+  int pagesInRight = (int)Math.Floor((decimal)(pageRage - 1)/2);
   int pagesInLeft = pageRage - 1 - pagesInRight;
   List<int> listPage = new List<int>();
   if (pageRage <= totalPages) {
@@ -48,43 +48,43 @@
     {
       listPage.Add(i);
     }
-  } *@
+  }
 
   @* Way 2: add to listPage, then add rest to listPage *@
-  List<int> listPage = new List<int>();
-  listPage.Add(currentPage);
-  int rest = pageRage - 1;
-  int pagesPerSite = (int)Math.Ceiling((decimal)rest / 2);
-  for (int i = 1; i <= pagesPerSite; i++)
-  {
-    if (currentPage + i <= totalPages) {
-      listPage.Add(currentPage + i);
-      rest--;
-    }
-    if (currentPage - i >= 1) {
-      listPage.Insert(0, currentPage - i);
-      rest--;
-    }
-  }
-  if (rest > 0) {
-    if (listPage[0] == 1) {
-      for (int i = 0; i < rest; i++)
-      {
-        if (listPage.Last() + 1 < totalPages) {
-          listPage.Add(listPage.Last() + 1);
-        }
-      }
-    }
-    if (listPage.Last() == totalPages) {
-      for (int i = 0; i < rest; i++)
-      {
-        if (listPage.First() - 1 > 1) {
-          listPage.Insert(0, listPage.First() - 1);
-        }
-      }
-    }
-  }
-  if (listPage.Count > pageRage) listPage.Remove(listPage.Last());
+  //List<int> listPage = new List<int>();
+  //listPage.Add(currentPage);
+  //int rest = pageRage - 1;
+  //int pagesPerSite = (int)Math.Ceiling((decimal)rest / 2);
+  //for (int i = 1; i <= pagesPerSite; i++)
+  //{
+  //  if (currentPage + i <= totalPages) {
+  //    listPage.Add(currentPage + i);
+  //    rest--;
+  //  }
+  //  if (currentPage - i >= 1) {
+  //    listPage.Insert(0, currentPage - i);
+  //    rest--;
+  //  }
+  //}
+  //if (rest > 0) {
+  //  if (listPage[0] == 1) {
+  //    for (int i = 0; i < rest; i++)
+  //    {
+  //      if (listPage.Last() + 1 < totalPages) {
+  //        listPage.Add(listPage.Last() + 1);
+  //      }
+  //    }
+  //  }
+  //  if (listPage.Last() == totalPages) {
+  //    for (int i = 0; i < rest; i++)
+  //    {
+  //      if (listPage.First() - 1 > 1) {
+  //        listPage.Insert(0, listPage.First() - 1);
+  //      }
+  //    }
+  //  }
+  //}
+  //if (listPage.Count > pageRage) listPage.Remove(listPage.Last());
 }
 
 <nav aria-label="Page navigation example">

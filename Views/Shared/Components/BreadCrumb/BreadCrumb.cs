@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using AppMVC.Models.Blog;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AppMVC.Components
@@ -7,7 +5,7 @@ namespace AppMVC.Components
     [ViewComponent]
     public class BreadCrumb : ViewComponent
     {
-        public IViewComponentResult Invoke(List<Category> list)
+        public IViewComponentResult Invoke(dynamic list)
         {
             return View(list);
         }

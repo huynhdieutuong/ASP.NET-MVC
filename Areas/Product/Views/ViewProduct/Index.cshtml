@@ -1,0 +1,55 @@
+﻿@using AppMVC.Components;
+@model List<ProductModel>
+
+@{
+  ViewData["Title"] = "All products in " + (ViewBag.catSlug == null ? "all categories" : ViewBag.category.Title);
+}
+
+@if (ViewBag.parentsList != null)
+  @await Component.InvokeAsync("BreadCrumb", ViewBag.parentsList)
+
+<h1>@ViewData["Title"]</h1>
+
+<hr>
+
+<div class="d-flex flex-wrap justify-content-between">
+    @foreach (var product in Model)
+    {
+        var srcImg = "/uploads/no-photo.jpg";
+        if (product.Photos.Any())
+        {
+            srcImg = $"/uploads/Products/{product.Photos.FirstOrDefault().FileName}";
+        }
+
+        <div class="card mb-2" style="width: 32%">
+            <img src="@srcImg" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">@product.Title</h5>
+                <p>Price: <strong>@product.Price</strong></p>
+
+            </div>
+            <div class="card-body">
+                <a class="card-link" asp-controller="ViewProduct" asp-action="Details" asp-route-proSlug="@product.Slug">
+                    Details
+                </a>
+                <a asp-action="AddToCart" asp-route-productid="@product.Id" class="btn btn-primary ml-4">Add to cart</a>
+            </div>
+        </div>
+    }
+</div>
+
+@section Sidebar 
+{
+  <div class="category-sidebar">
+    @await Component.InvokeAsync("PCategorySidebar",
+      new PCategorySidebar.CategorySidebarData() 
+      {
+        Categories = ViewBag.categories,
+        Level = 0,
+        CategorySlug = ViewBag.catSlug
+      }
+    )
+  </div>
+}
+
+<partial name="_Pagination" model="@ViewBag.paginationModel" />

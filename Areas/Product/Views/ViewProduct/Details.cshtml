@@ -1,0 +1,59 @@
+﻿@using AppMVC.Components
+@model ProductModel
+
+@{
+  ViewData["Title"] = @Model.Title;
+}
+
+@if (ViewBag.parentsList != null)
+  @await Component.InvokeAsync("BreadCrumb", ViewBag.parentsList)
+
+<div class="detail-product">
+    <h1>@Model.Title</h1>
+    @foreach (var srcImg in ViewBag.srcImgs)
+   {
+       <img src="@srcImg" class="card-img-top" alt="...">
+   }
+    <div class="sapo">
+        @Model.Description
+    </div>
+    <div>
+        <p>
+            Price: <strong>@Model.Price</strong>
+            <a asp-action="AddToCart" asp-route-productid="@Model.Id"  class="btn btn-danger">Add to cart</a>
+        </p>
+    </div>
+    <div>
+        <i>Updated: @Model.DateUpdated</i> / 
+        Author: <strong>@Model.Author.UserName</strong>
+    </div>
+    <hr>
+
+    @Html.Raw(Model.Content)
+
+</div>
+
+@section Sidebar
+{
+  <div class="category-sidebar">
+    @await Component.InvokeAsync("PCategorySidebar",
+      new PCategorySidebar.CategorySidebarData()
+      {
+        Categories = ViewBag.categories,
+        Level = 0,
+        CategorySlug = ViewBag.catSlug
+      }
+    )
+  </div>
+
+  <ul class="list-group">
+    @foreach (var product in ViewBag.otherProducts)
+    {
+        <li class="list-group-item">
+            <a asp-controller="ViewProduct" asp-action="Details" asp-route-proSlug="@product.Slug">
+                @product.Title
+            </a>
+        </li>
+    }
+  </ul> 
+}

@@ -5,7 +5,8 @@
   ViewData["Title"] = @Model.Title;
 }
 
-@await Component.InvokeAsync("BreadCrumb", ViewBag.parentsList)
+@if (ViewBag.parentsList != null)
+  @await Component.InvokeAsync("BreadCrumb", ViewBag.parentsList)
 
 <div class="detail-post">
     <h1>@Model.Title</h1>

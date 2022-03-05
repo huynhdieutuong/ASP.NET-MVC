@@ -51,5 +51,21 @@ namespace AppMVC.Models.Product
                 }
             }
         }
+
+        public List<PCategory> GetParentList()
+        {
+            List<PCategory> parentsList = new List<PCategory>();
+            parentsList.Add(this);
+
+            var parent = this.ParentCategory;
+            while (parent != null)
+            {
+                parentsList.Add(parent);
+                parent = parent.ParentCategory;
+            }
+
+            parentsList.Reverse();
+            return parentsList;
+        }
     }
 }
