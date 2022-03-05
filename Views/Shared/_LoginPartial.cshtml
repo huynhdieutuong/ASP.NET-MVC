@@ -1,9 +1,18 @@
+@using AppMVC.Areas.Product.Service
 @using Microsoft.AspNetCore.Identity
 
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
+@inject CartService _cartService;
+
+@{
+    var cartCount = _cartService.GetCartItems().Count;
+}
 
 <ul class="nav navbar-nav navbar-right">
+   <li class="nav-item">
+      <a class="nav-link text-warning" asp-area="Product"  asp-controller="Cart" asp-action="Index">Cart (@cartCount)</a>
+    </li>
   @if (SignInManager.IsSignedIn(User))
   {
     <li class="nav-item">

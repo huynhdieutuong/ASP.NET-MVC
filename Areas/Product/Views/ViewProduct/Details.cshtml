@@ -20,7 +20,7 @@
     <div>
         <p>
             Price: <strong>@Model.Price</strong>
-            <a asp-action="AddToCart" asp-route-productid="@Model.Id"  class="btn btn-danger">Add to cart</a>
+            <a asp-action="AddToCart" asp-controller="Cart" asp-route-productId="@Model.Id"  class="btn btn-danger">Add to cart</a>
         </p>
     </div>
     <div>

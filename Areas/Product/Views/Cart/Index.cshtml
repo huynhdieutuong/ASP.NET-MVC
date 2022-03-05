@@ -1,0 +1,69 @@
+﻿@model List<CartItem>
+
+<h2>Cart</h2>
+
+@if (Model.Count > 0) {
+  decimal sum = 0;
+  int num = 1;
+
+  <table class="table">
+    <tr>
+      <th>#</th>
+      <th>Product</th>
+      <th>Price</th>
+      <th>Quantity</th>
+      <th>Total</th>
+      <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        var total = item.Quantity * item.Product.Price;
+        sum += total;
+
+        <tr>
+           <td>@(num++)</td>
+           <td>@item.Product.Title</td>
+           <td>@(item.Product.Price.ToString("n0"))</td>
+           <td><input asp-for="@item.Quantity" id="@($"quantity-{item.Product.Id}")"/></td>
+           <td>@(total.ToString("n0"))</td>
+           <td>
+              <button class="btn btn-success update-cart-item" data-productId="@item.Product.Id">Update</button>
+              <a asp-action="DeleteItem" asp-route-productId="@item.Product.Id" class="btn btn-danger">Delete</a>
+           </td>
+        </tr>
+    }
+      <tr>
+          <td colspan="4" class="text-right">Sum</td>
+          <td>@(sum.ToString("n0"))</td>
+          <td></td>
+      </tr>
+  </table>
+
+  <a asp-action="Checkout" class="btn btn-success">Checkout</a>
+
+  @section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".update-cart-item").click(function (event) {
+                event.preventDefault();
+                var productId = $(this).attr("data-productId");
+                var quantity = $("#quantity-" + productId).val();
+                $.ajax({
+                    type: "POST",
+                    url:"@Url.Action("UpdateItem")",
+                    data: {
+                        productId: productId,
+                        quantity:quantity
+                    },
+                    success: function (result) {
+                        window.location.href = "@Url.RouteUrl("cart")";
+                    }
+                });
+            });
+        });
+    </script>
+  }
+}
+else {
+  <p class="alert alert-danger">Cart empty</p>
+} 

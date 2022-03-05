@@ -32,7 +32,7 @@
                 <a class="card-link" asp-controller="ViewProduct" asp-action="Details" asp-route-proSlug="@product.Slug">
                     Details
                 </a>
-                <a asp-action="AddToCart" asp-route-productid="@product.Id" class="btn btn-primary ml-4">Add to cart</a>
+                <a asp-action="AddToCart" asp-controller="Cart" asp-route-productId="@product.Id" class="btn btn-primary ml-4">Add to cart</a>
             </div>
         </div>
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AppMVC.Areas.Product.Service;
 using AppMVC.ExtendMethods;
 using AppMVC.Models;
 using AppMVC.Services;
@@ -36,6 +37,14 @@ namespace AppMVC
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDistributedMemoryCache();  // Register cache service (use for Session)
+            services.AddSession(cfg =>
+            {
+                cfg.Cookie.Name = "appmvc";                 // Session's name
+                cfg.IdleTimeout = new TimeSpan(0, 30, 0);   // Session's lifetime
+            });
+            services.AddTransient<CartService>();
+
             services.AddDbContext<AppDbContext>(options =>
             {
                 string connectString = Configuration.GetConnectionString("AppMvcConnectionString");
@@ -154,6 +163,8 @@ namespace AppMVC
                 ),
                 RequestPath = "/uploads"
             });
+
+            app.UseSession();
 
             app.AddStatusCodePage(); // Custom Response Code 400 - 599
 
